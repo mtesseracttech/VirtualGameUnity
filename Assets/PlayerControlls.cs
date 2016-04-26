@@ -2,10 +2,16 @@
 using System.Collections;
 
 public class PlayerControlls : MonoBehaviour {
+    public GameObject gun;
+    public GameObject bulletPrefab;
+    private GameObject bullet;
+
+    ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
     private int ForwardSpeed = 0;
     private int SidewaysSpeed = 0;
     private int UpwardsSpeed = 0;
+    ////////////////////////////////////////////////////////////////////
 
     ////////////// Variables used for player and camera rotation ///////
     public Transform camera;
@@ -23,6 +29,7 @@ public class PlayerControlls : MonoBehaviour {
     {
         PlayerMovement();
         PlayerAndCameraRotation();
+        Shoot();
     }
 
     void Start()
@@ -30,6 +37,22 @@ public class PlayerControlls : MonoBehaviour {
         // Make the rigid body not change rotation
         if (GetComponent<Rigidbody>())
             GetComponent<Rigidbody>().freezeRotation = true;
+    }
+    void Shoot()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 gunPos = gun.transform.position;
+            Vector3 gunDirection = gun.transform.forward;
+            Quaternion gunRotation = gun.transform.rotation;
+            float spawnDistance = 0.055f;
+
+            Vector3 spawnPos = gunPos + gunDirection * spawnDistance;
+
+            bullet = Instantiate(bulletPrefab, spawnPos, gunRotation) as GameObject;
+            bullet.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, 1));
+
+        }
     }
     void PlayerMovement()
     {
@@ -84,6 +107,7 @@ public class PlayerControlls : MonoBehaviour {
 
             transform.localEulerAngles = new Vector3(0, rotationX, 0);
             camera.localEulerAngles = new Vector3(-rotationY, 0, 0);
+            gun.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
         }
         else if (axes == RotationAxes.MouseX)
         {
