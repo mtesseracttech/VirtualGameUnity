@@ -6,15 +6,15 @@ public class Tackle : MonoBehaviour
     public LayerMask collisionMask;
     private float speed = 10;
     private float journeyLength;
-    private bool disantce = false;
-    float lerpTime = 1f;
-    float currentLerpTime;
+    private bool disantce;
+    public bool tackleBool;
     Vector3 startPos;
-    Vector3 endPos;
 
     void Start()
     {
         disantce = false;
+        tackleBool = false;
+
     }
     public void SetSpeed(float newSpeed)
     {
@@ -23,7 +23,7 @@ public class Tackle : MonoBehaviour
 
     void Update()
     {
-        
+        startPos = transform.position;
         journeyLength = speed;
         CheckCollisions(journeyLength);
     }
@@ -35,14 +35,18 @@ public class Tackle : MonoBehaviour
         if (Physics.Raycast(ray, out hit, journeyLength,collisionMask))
         {
             OnHitObject(hit);
+            disantce = false;
+            tackleBool = false;
             if (Physics.Raycast(ray, out hit, 4, collisionMask))
             {
                 disantce = true;
-                if (Input.GetKeyUp(KeyCode.E))
+                if (Input.GetKey(KeyCode.E))
                 {
                     disantce = false;
-                    float perc = currentLerpTime / lerpTime;
-                    transform.position = Vector3.Lerp(startPos,hit.collider.gameObject.transform.position,perc);
+                    tackleBool = true;
+                    transform.position = Vector3.Lerp(startPos, hit.collider.gameObject.transform.position, 0.03f);
+                    if (Physics.Raycast(ray, out hit, 0.6f, collisionMask))
+                        Destroy(hit.transform.gameObject);
                 }
             }
         }
@@ -50,20 +54,14 @@ public class Tackle : MonoBehaviour
 
     void OnHitObject(RaycastHit hit)
     {
-        print(" we hit " + hit.collider.gameObject.name + " distance " + hit.distance);
-        //GameObject.Destroy(gameObject);
+       
     }
 
     void OnGUI()
     {
-        //if (GUI.Button(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 120, 25), "E"))
-       // {
-            //GUI.Box(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 120, 25), "Press E");
-        //    disantce = !disantce;
-      //  }
         if (disantce)
         {
-            GUI.Box(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 120, 25), "Press E");
+            GUI.Box(new Rect(Screen.width / 2 - 50, Screen.height / 2 - 100, 120, 25), "Hold E");
         }
         
     }

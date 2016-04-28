@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
-//using UnityEngine.UI;
+using UnityEngine.UI;
 
 public class PlayerControlls : MonoBehaviour {
-    //public Text ammunation;
+    public Text ammunation;
     private int ammo;
     private float deltaTime;
+
+    private bool slowMotion;
 
     ////////////// Variables used for Line of Aim Handling /////////////
     RaycastHit hitInfo;
@@ -47,8 +49,20 @@ public class PlayerControlls : MonoBehaviour {
     ///////////////////////////////////////////////////////////////////
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            slowMotion = !slowMotion;
+        }
+        if (slowMotion)
+        {
+            Time.timeScale = 0.5f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-        //ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
+        ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
         LineOfAimHandler();
         PlayerMovement();
         PlayerAndCameraRotation();
@@ -71,7 +85,7 @@ public class PlayerControlls : MonoBehaviour {
         // Make the rigid body not change rotation
         if (GetComponent<Rigidbody>())
             GetComponent<Rigidbody>().freezeRotation = true;
-        
+        slowMotion = false;
     }
     void PickUpHandler()
     {
