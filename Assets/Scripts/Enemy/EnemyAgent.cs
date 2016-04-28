@@ -11,6 +11,7 @@ public class EnemyAgent : MonoBehaviour
     public int SightRange = 10;
     public GameObject TargetObject;
     public float SlerpSpeed = 0.1f;
+    public NavMeshAgent NavAgent { get; set; }
 
     public Rigidbody Parent { get; private set; }
     public Rigidbody Target { get; private set; }
@@ -24,11 +25,13 @@ public class EnemyAgent : MonoBehaviour
     {
         Parent = GetComponent<Rigidbody>();
         Target = TargetObject.GetComponent<Rigidbody>();
+        NavAgent = GetComponent<NavMeshAgent>();
 
         _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
         _stateCache[typeof (AttackState)] = new AttackState(this);
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
+        _stateCache[typeof (LookoutState)] = new LookoutState(this);
 
         SetState(typeof (PatrolState));
     }
@@ -37,18 +40,16 @@ public class EnemyAgent : MonoBehaviour
     {
         Debug.Log("Switching state to:" + pState.FullName);
         EnteredNewState = true;
+        NavAgent.Stop();
         _state = _stateCache[pState];
     }
 
     // Update is called once per frame
     private void FixedUpdate()
-    {
+    {   
         if (LookForTarget())
         {
             LastSeenTargetPosition = Target.position;
-            var differenceVector = LastSeenTargetPosition - Parent.position;
-            Parent.transform.rotation = Quaternion.Slerp(Parent.transform.rotation, Quaternion.LookRotation(differenceVector, Vector3.up), SlerpSpeed);
-            Parent.transform.rotation = Quaternion.Euler(new Vector3(0f, Parent.transform.rotation.eulerAngles.y, 0f));
             Debug.DrawLine(Parent.position, Target.position, Color.red);
             SeesTarget = true;
         }
@@ -78,24 +79,14 @@ public class EnemyAgent : MonoBehaviour
         if (differenceVec.magnitude < SightRange) //Sees if Target is even in range
         {
             var targetAngle = Vector3.Angle(differenceVec, Parent.transform.forward);
-            if (targetAngle > SightConeAngle/2) //Sees if Target is in sight cone
-            {
-                Debug.Log("Player out of sight cone!");
-                return false;
-            }
+            if (targetAngle > SightConeAngle/2) return false; //Sees if Target is in sight cone
             RaycastHit hit;
             if (Physics.Raycast(Parent.position, differenceVec, out hit, differenceVec.magnitude))
             {
-                if (hit.collider.gameObject.tag != "Player") //Checks if anything is between the Target and the Parent
-                {
-                    Debug.Log("Something is between me and the Player");
-                    return false;
-                }
+                if (hit.collider.gameObject.tag != "Player") return false; //Checks if anything is between the Target and the Parent
             }
-            Debug.Log("I can see the Player!");
             return true;
         }
-        Debug.Log("Player is out of range!");
         return false;
     }
 }

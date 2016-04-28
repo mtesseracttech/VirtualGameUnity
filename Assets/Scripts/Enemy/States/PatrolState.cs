@@ -15,7 +15,7 @@ public class PatrolState : AbstractEnemyState
     {
         if (_agent.EnteredNewState)
         {
-            if(Quaternion.Angle(_agent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
+            if(Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
             _agent.EnteredNewState = false;
         }
 
@@ -30,7 +30,7 @@ public class PatrolState : AbstractEnemyState
                 //Corrects angle before continuing to patrol
                 _agent.Parent.transform.rotation = Quaternion.Slerp(_agent.Parent.transform.rotation, _originalRotation, _slerpSpeed);
                 _agent.Parent.transform.rotation = Quaternion.Euler(new Vector3(0f, _agent.Parent.transform.rotation.eulerAngles.y, 0f));
-                if (!(Quaternion.Angle(_agent.transform.rotation, _originalRotation) > 0.1f)) _angleAlignedFirstTime = true;
+                if (!(Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f)) _angleAlignedFirstTime = true;
             }
             else
             {

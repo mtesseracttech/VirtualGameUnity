@@ -11,22 +11,42 @@ public class ChaseState : AbstractEnemyState
 
     public override void Update()
     {
+        if (_agent.EnteredNewState)
+        {
+            _agent.NavAgent.destination = _agent.LastSeenTargetPosition;
+            _agent.NavAgent.Resume();
+            _agent.EnteredNewState = false;
+        }
+
         if (_agent.SeesTarget)
         {
             _agent.SetState(typeof(AttackState));
         }
         else
         {
-            var differenceVector = _agent.LastSeenTargetPosition - _agent.Parent.transform.position;
-            if (differenceVector.magnitude < 0.1f)
+            if (Vector3.Distance(_agent.Parent.position, _agent.LastSeenTargetPosition) < 0.1f)
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
-                _agent.SetState(typeof(ReturnState));
+                _agent.NavAgent.Stop();
+                _agent.SetState(typeof(LookoutState));
             }
-            differenceVector.Normalize();
-            _agent.Parent.position = _agent.Parent.position + differenceVector * _chaseSpeed;
-            _agent.Parent.transform.rotation = Quaternion.Slerp(_agent.Parent.transform.rotation, Quaternion.LookRotation(differenceVector, Vector3.up), _slerpSpeed);
-            _agent.Parent.transform.rotation = Quaternion.Euler(new Vector3(0f, _agent.Parent.transform.rotation.eulerAngles.y, 0f));
         }
     }
 }
+
+
+//OLD CODE:
+/*
+var differenceVector = _agent.LastSeenTargetPosition - _agent.Parent.transform.position;
+if (differenceVector.magnitude < 0.1f)
+{
+    _agent.Parent.position = _agent.LastSeenTargetPosition;
+    _agent.SetState(typeof(LookoutState));
+}
+
+differenceVector.Normalize();
+_agent.Parent.position = _agent.Parent.position + differenceVector * _chaseSpeed;
+
+_agent.Parent.transform.rotation = Quaternion.Slerp(_agent.Parent.transform.rotation, Quaternion.LookRotation(differenceVector, Vector3.up), _slerpSpeed);
+_agent.Parent.transform.rotation = Quaternion.Euler(new Vector3(0f, _agent.Parent.transform.rotation.eulerAngles.y, 0f));
+*/
