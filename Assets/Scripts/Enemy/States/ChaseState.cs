@@ -25,7 +25,7 @@ public class ChaseState : AbstractEnemyState
         else
         {
             //Debug.Log(Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition));
-            if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1001f) //Kind of a hack because Unity is being weird
+            if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1f) //Kind of a hack because Unity is being weird
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
                 _agent.SetState(typeof(LookoutState));
