@@ -5,7 +5,6 @@ public class PlayerControlls : MonoBehaviour {
     public GameObject gun;
     public GameObject bulletPrefab;
     private GameObject bullet;
-
     ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
     private int ForwardSpeed = 0;
@@ -18,8 +17,8 @@ public class PlayerControlls : MonoBehaviour {
     private Transform camera;
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
-    public float sensitivityX = 15F;
-    public float sensitivityY = 15F;
+    public float sensitivityX = 2F;
+    public float sensitivityY = 2F;
     public float minimumX = -360F;
     public float maximumX = 360F;
     public float minimumY = -60F;
