@@ -2,9 +2,11 @@
 using System.Collections;
 
 public class PlayerControlls : MonoBehaviour {
+    public GameObject test;
     public GameObject gun;
     public GameObject bulletPrefab;
     private GameObject bullet;
+
     ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
     private int ForwardSpeed = 0;
@@ -13,12 +15,11 @@ public class PlayerControlls : MonoBehaviour {
     ////////////////////////////////////////////////////////////////////
 
     ////////////// Variables used for player and camera rotation ///////
-    [SerializeField]
-    private Transform camera;
+    public Transform camera;
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
-    public float sensitivityX = 2F;
-    public float sensitivityY = 2F;
+    public float sensitivityX = 15F;
+    public float sensitivityY = 15F;
     public float minimumX = -360F;
     public float maximumX = 360F;
     public float minimumY = -60F;
@@ -40,6 +41,15 @@ public class PlayerControlls : MonoBehaviour {
     }
     void Shoot()
     {
+        RaycastHit hitInfo;
+        Ray ray = new Ray(camera.TransformPoint(camera.position), test.transform.TransformPoint(test.transform.position));
+        if (Physics.Raycast(ray, out hitInfo))
+        {
+            gun.transform.forward = hitInfo.point - gameObject.gameObject.transform.position;
+        }
+
+
+
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 gunPos = gun.transform.position;
@@ -50,7 +60,7 @@ public class PlayerControlls : MonoBehaviour {
             Vector3 spawnPos = gunPos + gunDirection * spawnDistance;
 
             bullet = Instantiate(bulletPrefab, spawnPos, gunRotation) as GameObject;
-            bullet.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, 1));
+            bullet.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, bullet.GetComponent<BulletScript>().force));
 
         }
     }
@@ -107,7 +117,6 @@ public class PlayerControlls : MonoBehaviour {
 
             transform.localEulerAngles = new Vector3(0, rotationX, 0);
             camera.localEulerAngles = new Vector3(-rotationY, 0, 0);
-            gun.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
         }
         else if (axes == RotationAxes.MouseX)
         {
