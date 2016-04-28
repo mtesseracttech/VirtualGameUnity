@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class PlayerControlls : MonoBehaviour {
-    public Text ammunation;
+   // public Text ammunation;
     private int ammo;
     private float deltaTime;
 
@@ -62,7 +62,7 @@ public class PlayerControlls : MonoBehaviour {
             Time.timeScale = 1f;
         }
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-        ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
+       // ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
         LineOfAimHandler();
         PlayerMovement();
         PlayerAndCameraRotation();
