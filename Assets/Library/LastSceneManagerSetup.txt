@@ -1,1 +1,4 @@
-sceneSetups: []
+sceneSetups:
+- path: Kotryna.unity
+  isLoaded: 1
+  isActive: 1
