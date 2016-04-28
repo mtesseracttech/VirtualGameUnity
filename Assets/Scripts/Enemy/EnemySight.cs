@@ -9,20 +9,23 @@ public class EnemySight : MonoBehaviour
     private Rigidbody _parent;
     private Rigidbody _target;
     private bool _targetInSight;
+    private Vector3 _lastSeenPosition;
 
     // Use this for initialization
     private void Start()
     {
         _parent = GetComponent<Rigidbody>();
         _target = TargetObject.GetComponent<Rigidbody>();
-        SeesTarget();
-
     }
 
     // Update is called once per frame
     private void Update()
     {
-        SeesTarget();
+        if (SeesTarget())
+        {
+            _lastSeenPosition = _target.position;
+        }
+
     }
 
     private bool SeesTarget()
