@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class player : MonoBehaviour {
-
+public class GunScript : MonoBehaviour {
+    public float fireDelay;
 	// Use this for initialization
 	void Start () {
 	
@@ -12,4 +12,8 @@ public class player : MonoBehaviour {
 	void Update () {
 	
 	}
+    public float FireDelay()
+    {
+        return fireDelay;
+    }
 }

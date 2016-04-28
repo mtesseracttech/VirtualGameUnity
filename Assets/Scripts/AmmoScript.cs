@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShootingScript : MonoBehaviour {
-
+public class AmmoScript : MonoBehaviour {
+    public int amountOfBullets;
 	// Use this for initialization
 	void Start () {
 	
@@ -12,4 +12,8 @@ public class ShootingScript : MonoBehaviour {
 	void Update () {
 	
 	}
+    public int GetAmountOfBullets()
+    {
+        return amountOfBullets;
+    }
 }
