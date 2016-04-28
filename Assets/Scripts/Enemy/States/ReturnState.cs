@@ -28,6 +28,7 @@ public class ReturnState : AbstractEnemyState
         }
         else
         {
+            //Debug.Log(Vector3.Distance(_agent.Parent.position, _originalPoint));
             if (Vector3.Distance(_agent.Parent.position, _originalPoint) < 0.1f)
             {
                 _agent.Parent.position = _originalPoint;

@@ -17,17 +17,17 @@ public class ChaseState : AbstractEnemyState
             _agent.NavAgent.Resume();
             _agent.EnteredNewState = false;
         }
-
+        _agent.ForceVision();
         if (_agent.SeesTarget)
         {
             _agent.SetState(typeof(AttackState));
         }
         else
         {
-            if (Vector3.Distance(_agent.Parent.position, _agent.LastSeenTargetPosition) < 0.1f)
+            //Debug.Log(Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition));
+            if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1001f) //Kind of a hack because Unity is being weird
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
-                _agent.NavAgent.Stop();
                 _agent.SetState(typeof(LookoutState));
             }
         }

@@ -11,6 +11,10 @@ public class EnemyAgent : MonoBehaviour
     public int SightRange = 10;
     public GameObject TargetObject;
     public float SlerpSpeed = 0.1f;
+
+    public GameObject Gun;
+    public GameObject BulletPrefab;
+
     public NavMeshAgent NavAgent { get; set; }
 
     public Rigidbody Parent { get; private set; }
@@ -41,34 +45,40 @@ public class EnemyAgent : MonoBehaviour
         Debug.Log("Switching state to:" + pState.FullName);
         EnteredNewState = true;
         NavAgent.Stop();
+        SetSeeTarget();
         _state = _stateCache[pState];
     }
 
     // Update is called once per frame
     private void FixedUpdate()
-    {   
+    {
+        DebugCode();
+        _state.Update();
+        SetSeeTarget();
+    }
+
+    private void SetSeeTarget()
+    {
         if (LookForTarget())
         {
             LastSeenTargetPosition = Target.position;
-            Debug.DrawLine(Parent.position, Target.position, Color.red);
+            Debug.DrawLine(Parent.position, Target.position, Color.yellow);
             SeesTarget = true;
         }
         else
         {
             SeesTarget = false;
         }
-        _state.Update();
-        DebugCode();
     }
 
     private void DebugCode()
     {
-        Debug.DrawLine(Parent.position, Parent.position + Parent.transform.forward, Color.blue);
-
+        Debug.DrawLine(Parent.transform.position, Parent.transform.position + Parent.transform.forward, Color.blue);
         if (Input.GetKeyDown("g"))
         {
             Debug.Log("Currently in state: " + _state);
         }
+
     }
 
 
@@ -88,5 +98,10 @@ public class EnemyAgent : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void ForceVision()
+    {
+        SetSeeTarget();
     }
 }
