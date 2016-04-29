@@ -22,26 +22,26 @@ public class Stamina : MonoBehaviour
     void Update()
     {
 
-        if (tackle.tackleBool)
+        if (tackle.TackleBool)
             isRunning = true;
         else
             isRunning = false;
 
         if (isRunning)
         {
-            tackle.tackleBool = true;
+            tackle.TackleBool = true;
             stamina -= Time.deltaTime;
 
             if (stamina < 0)
             {
                 stamina = 0;
-                tackle.tackleBool = false;
+                tackle.TackleBool = false;
             }
         }
         else if (stamina < maxStamina)
         {
             stamina += Time.deltaTime / 60;
-            tackle.tackleBool = false;
+            tackle.TackleBool = false;
         }
     }
 
