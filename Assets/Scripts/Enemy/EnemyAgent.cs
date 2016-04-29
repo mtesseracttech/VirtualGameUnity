@@ -14,9 +14,9 @@ public class EnemyAgent : MonoBehaviour
 
     public GameObject Gun;
     public GameObject BulletPrefab;
+    public GameObject PlayerImpactParticles;
 
     public NavMeshAgent NavAgent { get; set; }
-
     public Rigidbody Parent { get; private set; }
     public Rigidbody Target { get; private set; }
     public bool EnteredNewState { get; set; }
@@ -33,7 +33,7 @@ public class EnemyAgent : MonoBehaviour
 
         _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
-        _stateCache[typeof (AttackState)] = new AttackState(this);
+        _stateCache[typeof (AttackState)] = new AttackState(this, Gun, BulletPrefab, PlayerImpactParticles);
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
         _stateCache[typeof (LookoutState)] = new LookoutState(this);
 
@@ -100,8 +100,5 @@ public class EnemyAgent : MonoBehaviour
         return false;
     }
 
-    public void ForceVision()
-    {
-        SetSeeTarget();
-    }
+    public void CreateParticles(GameObject particles, Vector3 position) {Instantiate(particles, position, Quaternion.identity);}
 }
