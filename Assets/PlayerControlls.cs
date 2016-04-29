@@ -25,6 +25,8 @@ public class PlayerControlls : MonoBehaviour {
     private Vector3 prevRayCastPoint;
 
     public GameObject particlePrefab;
+    public ParticleSystem muzzleFlash;
+    public GameObject objectHitEffect;
     ////////////////////////////////////////////////////////////////////
     ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
@@ -117,12 +119,22 @@ public class PlayerControlls : MonoBehaviour {
         }
         ///////////////////////////////////////////////////////////////////
     }
+
+    void PlayMuzzleFlash()
+    {
+        if (muzzleFlash != null)
+        {
+            muzzleFlash.Play();
+        }
+    }
+
     void Shoot()
     {
         // Enable delaycounter (fireDelta++)
         if (Input.GetMouseButton(0) && !countFireDelta)
         {
             countFireDelta = true;
+            PlayMuzzleFlash();
         }
         // Shoot a bullet if fireDelta = 0
         if (fireDelta == 0 && Input.GetMouseButton(0))
@@ -136,6 +148,11 @@ public class PlayerControlls : MonoBehaviour {
                     // Instantiating particles on target position
                     Vector3 particlesPos = hitInfo.collider.gameObject.transform.position + new Vector3(0, 0.2f, 0);
                     Instantiate(particlePrefab, particlesPos, Quaternion.identity);
+                }
+                else
+                {
+                    Vector3 muzzleFlashpos = hitInfo.collider.gameObject.transform.position;
+                    Instantiate(objectHitEffect, muzzleFlashpos, Quaternion.identity);
                 }
             }
             ///////////////////////////////////////////////////////////////////

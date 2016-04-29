@@ -32,12 +32,13 @@ public class Tackle : MonoBehaviour
     {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, _journeyLength,CollisionMask))
-        {
+       // if (Physics.Raycast(ray, out hit, _journeyLength,CollisionMask))
+       // {
             _disantce = false;
-            TackleBool = false;
+          TackleBool = false;
             if (Physics.Raycast(ray, out hit, 4, CollisionMask))
             {
+                Debug.DrawLine(transform.position, hit.point,Color.grey);
                 _disantce = true;
                 if (Input.GetKey(KeyCode.E))
                 {
@@ -51,7 +52,7 @@ public class Tackle : MonoBehaviour
                         _disantce = false;
                     } 
                 }
-            }
+           // }
         }
     }
     void OnGUI()
