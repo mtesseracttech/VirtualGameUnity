@@ -18,5 +18,22 @@ public class Door : MonoBehaviour
                 enabled = false;
                 return;
             }
-        }
+        changeValue = 0;
+        timePassed = 0;
+    }
+
+    void Update()
+    {
+        timePassed = Time.time;
+        timePassed = timePassed - Mathf.Floor(timePassed);
+        thisLight.color = originalColor*CalculateChange();
+    }
+
+    private float CalculateChange()
+    {
+        changeValue = -Mathf.Sin(timePassed*12*Mathf.PI)*0.05f;
+        return changeValue;
+    }
+
+
 }
