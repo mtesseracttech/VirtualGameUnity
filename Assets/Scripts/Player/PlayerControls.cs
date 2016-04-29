@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class PlayerControlls : MonoBehaviour {
+public class PlayerControls : MonoBehaviour {
    // public Text ammunation;
     private int ammo;
     private float deltaTime;
