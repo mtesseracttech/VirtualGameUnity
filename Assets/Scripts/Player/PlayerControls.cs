@@ -6,7 +6,7 @@ public class PlayerControls : MonoBehaviour {
    // public Text ammunation;
     private int ammo;
     private float deltaTime;
-
+    public float range = 50;
     private bool slowMotion;
 
     ////////////// Variables used for Line of Aim Handling /////////////
@@ -24,9 +24,14 @@ public class PlayerControls : MonoBehaviour {
     private GameObject bullet;
     private Vector3 prevRayCastPoint;
 
-    public GameObject particlePrefab;
-    public ParticleSystem muzzleFlash;
+    public ParticleSystem SmokeParticleSystem;
+    public GameObject hitParticles;
     public GameObject objectHitEffect;
+    private LineRenderer lineRenderer;
+    public Transform gunEnd;
+    private WaitForSeconds shotLength = new WaitForSeconds(.07f);
+    private AudioSource source;
+
     ////////////////////////////////////////////////////////////////////
     ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
@@ -80,6 +85,8 @@ public class PlayerControls : MonoBehaviour {
     }
     void Start()
     {
+        lineRenderer = GetComponent<LineRenderer>();
+        source = GetComponent<AudioSource>();
         deltaTime = 0f;
         fireDelay = 1;
         countFireDelta = false;
@@ -104,30 +111,37 @@ public class PlayerControls : MonoBehaviour {
         }
 
     }
+
     void LineOfAimHandler()
     {
         // Makes the gun always point at the end of ray (crosshair point)
         ray = new Ray(camera.transform.position, crosshair.transform.position - camera.transform.position);
-        if (Physics.Raycast(ray, out hitInfo))
-        {
+        if (Physics.Raycast(ray, out hitInfo,range))
+        {           
             if (hitInfo.point != prevRayCastPoint)
             {
                 gun.transform.LookAt(hitInfo.point);
                 prevRayCastPoint = hitInfo.point;
             }
-            Debug.DrawLine(camera.transform.position, hitInfo.point);
+            Debug.DrawLine(camera.transform.position, hitInfo.point,Color.blue);
         }
         ///////////////////////////////////////////////////////////////////
     }
 
     void PlayMuzzleFlash()
     {
-        if (muzzleFlash != null)
+        if (SmokeParticleSystem != null)
         {
-            muzzleFlash.Play();
+            SmokeParticleSystem.Play();
         }
     }
-
+    private IEnumerator ShotEffect()
+    {
+        lineRenderer.enabled = true;
+        source.Play();
+        yield return shotLength;
+        lineRenderer.enabled = false;
+    }
     void Shoot()
     {
         // Enable delaycounter (fireDelta++)
@@ -135,6 +149,7 @@ public class PlayerControls : MonoBehaviour {
         {
             countFireDelta = true;
             PlayMuzzleFlash();
+            
         }
         // Shoot a bullet if fireDelta = 0
         if (fireDelta == 0 && Input.GetMouseButton(0))
@@ -145,16 +160,19 @@ public class PlayerControls : MonoBehaviour {
                 if (hitInfo.collider.gameObject.tag == "enemy")
                 {
                     Destroy(hitInfo.collider.gameObject);
-                    // Instantiating particles on target position
-                    Vector3 particlesPos = hitInfo.collider.gameObject.transform.position + new Vector3(0, 0.2f, 0);
-                    Instantiate(particlePrefab, particlesPos, Quaternion.identity);
+                    // Instantiating particles on enemy position
+                    Vector3 particlesPos = hitInfo.collider.gameObject.transform.position ;
+                    Instantiate(hitParticles, particlesPos, Quaternion.identity);
                 }
                 else
                 {
-                    Vector3 muzzleFlashpos = hitInfo.collider.gameObject.transform.position;
-                    Instantiate(objectHitEffect, muzzleFlashpos, Quaternion.identity);
+                     lineRenderer.SetPosition(0, gunEnd.position);
+                     lineRenderer.SetPosition(1, hitInfo.point);
+                     Instantiate(hitParticles, hitInfo.point, Quaternion.identity);
                 }
+                StartCoroutine(ShotEffect());
             }
+            
             ///////////////////////////////////////////////////////////////////
 
             // Instantiating a bullet for visual effects
@@ -246,4 +264,7 @@ public class PlayerControls : MonoBehaviour {
     {
         return grounded;
     }
+
+    
+       
 }

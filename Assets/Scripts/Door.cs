@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Light))]
+//[RequireComponent(typeof(Light))]
 public class Door : MonoBehaviour
 {
     public enum flickerinLightStyles { CampFire = 0, Fluorescent = 1 };
@@ -45,7 +45,7 @@ public class Door : MonoBehaviour
     public bool FluorescentFlickerPlaySound = false;
     public AudioClip FluorescentFlickerAudioClip;
 
-    private Light light;
+    public Light light;
     // ------------------------
     void Start()
     {
