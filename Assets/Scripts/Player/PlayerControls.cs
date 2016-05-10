@@ -214,11 +214,11 @@ public class PlayerControls : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.W))
         {
-            _forwardSpeed = 1;
+            _forwardSpeed = 20;
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            _forwardSpeed = -1;
+            _forwardSpeed = -5;
         }
         else
         {
@@ -226,11 +226,11 @@ public class PlayerControls : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.A))
         {
-            _sidewaysSpeed = -1;
+            _sidewaysSpeed = -2;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            _sidewaysSpeed = 1;
+            _sidewaysSpeed = 5;
         }
         else
         {

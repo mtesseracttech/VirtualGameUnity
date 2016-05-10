@@ -4672,7 +4672,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 11420656, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: FireDelay
@@ -4693,6 +4693,18 @@ Prefab:
     - target: {fileID: 19881928, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: InitialModule.startSize.scalar
       value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 319f867195784294192a84e639759558, type: 2}
