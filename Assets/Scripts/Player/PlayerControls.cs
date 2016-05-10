@@ -263,8 +263,5 @@ public class PlayerControls : MonoBehaviour {
     public bool Grounded()
     {
         return _grounded;
-    }
-
-    
-       
+    }    
 }
