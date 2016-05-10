@@ -8,9 +8,9 @@ public class Crosshair : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-	    float crosshairSize = Screen.width*0.1f;
+	    float crosshairSize = Screen.width*0.15f;
         crossTexture = Resources.Load("Textures/crosshair") as Texture;
-        crossRect = new Rect (Screen.width/2 -8, Screen.height/2 - 8,
+        crossRect = new Rect (Screen.width/2, Screen.height/2 - 5,
             crosshairSize/8,crosshairSize/8);
 	}
     void OnGUI()
