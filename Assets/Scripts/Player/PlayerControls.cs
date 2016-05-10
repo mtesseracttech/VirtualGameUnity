@@ -53,6 +53,8 @@ public class PlayerControls : MonoBehaviour {
     public float minimumY = -90F;
     public float maximumY = 90F;
     float rotationY = 0F;
+    public int MaxMovementSpeed = 10;
+    public int MaxJumpSpeed = 100;
     ///////////////////////////////////////////////////////////////////
     void Update()
     {
@@ -205,7 +207,7 @@ public class PlayerControls : MonoBehaviour {
         Vector3 _velocity = rb.velocity;
         if (Input.GetKey(KeyCode.Space) && grounded)
         {
-            UpwardsSpeed = 10;
+            UpwardsSpeed = MaxJumpSpeed;
             grounded = false;
         }
         else
@@ -237,9 +239,9 @@ public class PlayerControls : MonoBehaviour {
             SidewaysSpeed = 0;
         }
         Vector3 direction = new Vector3(SidewaysSpeed, UpwardsSpeed, ForwardSpeed);
-        if (rb.velocity.magnitude <= 1)
+        if (rb.velocity.magnitude <= MaxMovementSpeed)
         {
-            rb.AddRelativeForce(direction * 10);
+            rb.AddRelativeForce(direction * MaxMovementSpeed*10);
         }
         //Debug.Log("Walk: " + _velocity.magnitude);
     }

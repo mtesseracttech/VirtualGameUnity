@@ -3,9 +3,9 @@
 public class AttackState : AbstractEnemyState
 {
     private float _slerpSpeed = 0.1f;
-    private GameObject _gun;
-    private GameObject _bulletPrefab;
-    private GameObject _particles;
+    //private GameObject _gun;
+    //private GameObject _bulletPrefab;
+    //private GameObject _particles;
     private Vector3 _actualAim;
     private System.Random random;
     private int _aimDistortion = 10; //The lower, the less distortion in degrees
@@ -15,12 +15,12 @@ public class AttackState : AbstractEnemyState
     private bool _countFireDelta;
     private float _fireDelta;
 
-    public AttackState(EnemyAgent agent, GameObject gun, GameObject bulletPrefab, GameObject particles) : base(agent)
+    public AttackState(EnemyAgent agent /*, GameObject bulletPrefab, GameObject particles*/) : base(agent)
     {
         random = new System.Random();
-        _gun = gun;
-        _bulletPrefab = bulletPrefab;
-        _particles = particles;
+        //_gun = gun;
+        //_bulletPrefab = bulletPrefab;
+        //_particles = particles;
     }
 
     public override void Update()
@@ -82,7 +82,7 @@ public class AttackState : AbstractEnemyState
             if (hit.collider.gameObject.tag == "Player")
             {
                 Debug.DrawLine(_agent.Parent.transform.position, _agent.Parent.transform.position + _actualAim, Color.green);
-                _agent.CreateParticles(_particles, hit.point);
+                //_agent.CreateParticles(_particles, hit.point);
                 Debug.Log("Player was hit!");
             }
         }
@@ -90,7 +90,6 @@ public class AttackState : AbstractEnemyState
         if (_countFireDelta)
         {
             _fireDelta += Time.deltaTime;
-            Debug.Log(_fireDelta + " Fire Delta");
         }
         if (_fireDelta >= 1f /*_gun.GetComponent<GunScript>().FireDelay() */)
         {

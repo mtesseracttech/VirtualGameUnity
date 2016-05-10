@@ -12,9 +12,9 @@ public class EnemyAgent : MonoBehaviour
     public GameObject TargetObject;
     public float SlerpSpeed = 0.1f;
 
-    public GameObject Gun;
-    public GameObject BulletPrefab;
-    public GameObject PlayerImpactParticles;
+    //public GameObject Gun;
+    //public GameObject BulletPrefab;
+    //public GameObject PlayerImpactParticles;
 
     public NavMeshAgent NavAgent { get; set; }
     public Rigidbody Parent { get; private set; }
@@ -33,7 +33,7 @@ public class EnemyAgent : MonoBehaviour
 
         _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
-        _stateCache[typeof (AttackState)] = new AttackState(this, Gun, BulletPrefab, PlayerImpactParticles);
+        _stateCache[typeof (AttackState)] = new AttackState(this);
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
         _stateCache[typeof (LookoutState)] = new LookoutState(this);
 
@@ -78,6 +78,7 @@ public class EnemyAgent : MonoBehaviour
         {
             Debug.Log("Currently in state: " + _state);
         }
+        Debug.DrawLine(Parent.transform.position, Target.transform.position, Color.green);
 
     }
 
@@ -86,13 +87,19 @@ public class EnemyAgent : MonoBehaviour
     private bool LookForTarget()
     {
         var differenceVec = Target.transform.position - Parent.transform.position;
+        //Debug.Log(differenceVec.magnitude);
         if (differenceVec.magnitude < SightRange) //Sees if Target is even in range
         {
             var targetAngle = Vector3.Angle(differenceVec, Parent.transform.forward);
-            if (targetAngle > SightConeAngle/2) return false; //Sees if Target is in sight cone
+            //Debug.Log("Angle between Parent and Target: " + targetAngle);
+            if (targetAngle > SightConeAngle/2)
+            {
+                return false; //Sees if Target is in sight cone
+            }
             RaycastHit hit;
             if (Physics.Raycast(Parent.position, differenceVec, out hit, differenceVec.magnitude))
             {
+                Debug.Log(hit.collider.gameObject.tag);
                 if (hit.collider.gameObject.tag != "Player") return false; //Checks if anything is between the Target and the Parent
             }
             return true;

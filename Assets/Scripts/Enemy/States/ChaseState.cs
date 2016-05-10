@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ChaseState : AbstractEnemyState
 {
     private float _chaseSpeed = 0.01f;
     private float _slerpSpeed = 0.1f;
+    private Vector2 _targetXZ;
+    private Vector2 _parentXZ;
 
     public ChaseState(EnemyAgent agent) : base(agent)
     {
@@ -15,6 +18,8 @@ public class ChaseState : AbstractEnemyState
         if (_agent.EnteredNewState)
         {
             _agent.NavAgent.destination = _agent.LastSeenTargetPosition;
+            _targetXZ = new Vector2(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
+            _parentXZ = new Vector2(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _agent.NavAgent.Resume();
             _agent.EnteredNewState = false;
         }
@@ -25,7 +30,11 @@ public class ChaseState : AbstractEnemyState
         }
         else
         {
-            if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1f) //Kind of a hack because Unity is being weird
+            _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
+            _targetXZ.Set(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
+            Debug.Log(Vector2.Distance(_targetXZ, _parentXZ));
+            //if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1f) //Kind of a hack because Unity is being weird
+            if(Vector2.Distance(_targetXZ, _parentXZ) < 0.01f)
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
                 _agent.SetState(typeof(LookoutState));

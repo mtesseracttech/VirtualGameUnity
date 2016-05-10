@@ -17,6 +17,7 @@ public class PatrolState : AbstractEnemyState
         {
             if(Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
             _agent.EnteredNewState = false;
+            
         }
 
         if (_agent.SeesTarget)
