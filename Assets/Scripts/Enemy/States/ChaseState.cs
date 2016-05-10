@@ -32,8 +32,7 @@ public class ChaseState : AbstractEnemyState
         {
             _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _targetXZ.Set(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
-            Debug.Log(Vector2.Distance(_targetXZ, _parentXZ));
-            //if (Vector3.Distance(_agent.Parent.transform.position, _agent.LastSeenTargetPosition) < 0.1f) //Kind of a hack because Unity is being weird
+            Debug.Log("Distance from LastSeenPoint: " + Vector2.Distance(_targetXZ, _parentXZ));
             if(Vector2.Distance(_targetXZ, _parentXZ) < 0.01f)
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;

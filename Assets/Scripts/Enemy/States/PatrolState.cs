@@ -1,13 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class PatrolState : AbstractEnemyState
 {
     private Quaternion _originalRotation;
     private bool _angleAlignedFirstTime;
     private float _slerpSpeed = 0.1f;
+    private List<Vector2> _path;
+    private Vector2 _currentPos;
+    private int _currentPathPoint;
+    private Vector2 _currentTarget;
 
-    public PatrolState(EnemyAgent agent, Quaternion originalRotation) : base(agent)
+    
+
+    public PatrolState(EnemyAgent agent, Quaternion originalRotation, NavigationPath patrolPath = null) : base(agent)
     {
+        if (patrolPath != null)
+        {
+            _path = patrolPath.Path;
+            _currentPos = new Vector2(_agent.Parent.position.x, _agent.Parent.position.z);
+        }
         _originalRotation = originalRotation;
     }
 
@@ -16,9 +28,16 @@ public class PatrolState : AbstractEnemyState
         if (_agent.EnteredNewState)
         {
             if(Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
+            if (_path != null)
+            {
+                _currentTarget = _path[0];
+                _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y, _currentTarget.y));
+                _agent.NavAgent.Resume();
+            }
             _agent.EnteredNewState = false;
             
         }
+        if(_path != null)Debug.DrawLine(_agent.Parent.transform.position, new Vector3(_currentTarget.x, _agent.Parent.transform.position.y, _currentTarget.y));
 
         if (_agent.SeesTarget)
         {
@@ -35,9 +54,38 @@ public class PatrolState : AbstractEnemyState
             }
             else
             {
-                _agent.Parent.transform.Rotate(0, 1.5f, 0);
-                _agent.Parent.transform.Translate(0, 0, 0.01f);
+                if (_path != null) FollowPath();
+                else WalkInCircles();
             }
         }
+    }
+
+    private void WalkInCircles()
+    {
+        _agent.Parent.transform.Rotate(0, 1.5f, 0);
+        _agent.Parent.transform.Translate(0, 0, 0.01f);
+    }
+
+    private void FollowPath()
+    {
+        _currentPos.Set(_agent.Parent.transform.position.x , _agent.Parent.transform.position.z); 
+        if (Vector2.Distance(_currentPos, _currentTarget) < 2f)
+        {
+            Debug.Log("REACHED THE POINT");
+            _currentTarget = NextPoint();
+            _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y, _currentTarget.y));
+
+        }
+    }
+
+    private Vector2 NextPoint()
+    {
+        Debug.Log("Picking Next Point!");
+        _currentPathPoint++;
+        if (_currentPathPoint >= _path.Count)
+        {
+            _currentPathPoint = 0;
+        }
+        return _path[_currentPathPoint];
     }
 }

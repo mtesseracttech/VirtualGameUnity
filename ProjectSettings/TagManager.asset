@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - floor
+  - NavigationPoint
+  - New Tag
+  - enemy
+  - NavigationPath
+  - New Tag
   layers:
   - Default
   - TransparentFX

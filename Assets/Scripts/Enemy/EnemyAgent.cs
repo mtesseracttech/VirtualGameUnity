@@ -11,7 +11,7 @@ public class EnemyAgent : MonoBehaviour
     public int SightRange = 10;
     public GameObject TargetObject;
     public float SlerpSpeed = 0.1f;
-
+    public NavigationPath PatrolPath = null;
     //public GameObject Gun;
     //public GameObject BulletPrefab;
     //public GameObject PlayerImpactParticles;
@@ -31,7 +31,7 @@ public class EnemyAgent : MonoBehaviour
         Target = TargetObject.GetComponent<Rigidbody>();
         NavAgent = GetComponent<NavMeshAgent>();
 
-        _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation);
+        _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation, PatrolPath);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
         _stateCache[typeof (AttackState)] = new AttackState(this);
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
@@ -78,7 +78,6 @@ public class EnemyAgent : MonoBehaviour
         {
             Debug.Log("Currently in state: " + _state);
         }
-        Debug.DrawLine(Parent.transform.position, Target.transform.position, Color.green);
 
     }
 
