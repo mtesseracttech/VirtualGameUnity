@@ -83,6 +83,7 @@ public class AttackState : AbstractEnemyState
             {
                 Debug.DrawLine(_agent.Parent.transform.position, _agent.Parent.transform.position + _actualAim, Color.green);
                 _agent.CreateParticles(_particles, hit.point);
+                Debug.Log("Player was hit!");
             }
         }
         else Debug.DrawLine(_agent.Parent.transform.position, _agent.Parent.transform.position + _actualAim, Color.white);

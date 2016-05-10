@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Camera : MonoBehaviour {
-    public PlayerControlls player;
+    public PlayerControls player;
     ////////////// Variables used for camera shake effect when the player jumps /////
     private bool shake;
     private bool up;

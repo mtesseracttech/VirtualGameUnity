@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 
-public class PlayerControlls : MonoBehaviour {
+public class PlayerControls : MonoBehaviour {
    // public Text ammunation;
     private int ammo;
     private float deltaTime;
@@ -51,20 +50,12 @@ public class PlayerControlls : MonoBehaviour {
     ///////////////////////////////////////////////////////////////////
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            slowMotion = !slowMotion;
-        }
-        if (slowMotion)
-        {
-            Time.timeScale = 0.5f;
-        }
-        else
-        {
-            Time.timeScale = 1f;
-        }
+        if (Input.GetKeyDown(KeyCode.LeftShift)) slowMotion = !slowMotion;
+        if (slowMotion) Time.timeScale = 0.5f;
+        else Time.timeScale = 1f;
+
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
-       // ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
+        // ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
         LineOfAimHandler();
         PlayerMovement();
         PlayerAndCameraRotation();
@@ -73,11 +64,9 @@ public class PlayerControlls : MonoBehaviour {
     }
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.tag == "floor")
-        {
-            grounded = true;
-        }
+        if (collision.gameObject.CompareTag("floor")) grounded = true;
     }
+
     void Start()
     {
         deltaTime = 0f;
@@ -85,10 +74,10 @@ public class PlayerControlls : MonoBehaviour {
         countFireDelta = false;
         fireDelta = 0;
         // Make the rigid body not change rotation
-        if (GetComponent<Rigidbody>())
-            GetComponent<Rigidbody>().freezeRotation = true;
+        if (GetComponent<Rigidbody>()) GetComponent<Rigidbody>().freezeRotation = true;
         slowMotion = false;
     }
+
     void PickUpHandler()
     {
         if (hitInfo.collider != null && hitInfo.collider.gameObject.tag == "magazine")
@@ -111,13 +100,12 @@ public class PlayerControlls : MonoBehaviour {
         if (Physics.Raycast(ray, out hitInfo))
         {
             if (hitInfo.point != prevRayCastPoint)
-            {
+            {  
                 gun.transform.LookAt(hitInfo.point);
                 prevRayCastPoint = hitInfo.point;
             }
-            Debug.DrawLine(camera.transform.position, hitInfo.point);
+            Debug.DrawLine(camera.transform.position, hitInfo.point, Color.black);
         }
-        ///////////////////////////////////////////////////////////////////
     }
 
     void PlayMuzzleFlash()
@@ -146,16 +134,15 @@ public class PlayerControlls : MonoBehaviour {
                 {
                     Destroy(hitInfo.collider.gameObject);
                     // Instantiating particles on target position
-                    Vector3 particlesPos = hitInfo.collider.gameObject.transform.position + new Vector3(0, 0.2f, 0);
-                    Instantiate(particlePrefab, particlesPos, Quaternion.identity);
+                    //Vector3 particlesPos = hitInfo.collider.gameObject.transform.position + new Vector3(0, 0.2f, 0);
+                    Instantiate(particlePrefab, hitInfo.point, Quaternion.identity);
                 }
                 else
                 {
-                    Vector3 muzzleFlashpos = hitInfo.collider.gameObject.transform.position;
+                    Vector3 muzzleFlashpos = hitInfo.collider.gameObject.transform.position//hitInfo.point;
                     Instantiate(objectHitEffect, muzzleFlashpos, Quaternion.identity);
                 }
             }
-            ///////////////////////////////////////////////////////////////////
 
             // Instantiating a bullet for visual effects
             Vector3 gunPos = gun.transform.position/*new Vector3(camera.position.x, camera.position.y-0.125f, camera.position.z)*/;
@@ -163,17 +150,18 @@ public class PlayerControlls : MonoBehaviour {
             Quaternion gunRotation = gun.transform.rotation;
             float spawnDistance = 0.055f;
             Vector3 spawnPos = gunPos + gunDirection * spawnDistance;
+            Debug.Log("Bullet spawn position: " + spawnPos);
 
             bullet = Instantiate(bulletPrefab, spawnPos, gunRotation) as GameObject;
+
             bullet.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, bullet.GetComponent<BulletScript>().force));
             bullet.GetComponent<BulletScript>().SetDistance((hitInfo.point - spawnPos).magnitude);
-            ///////////////////////////////////////////////////////////////////
         }
-        // Count delay for next shot
-        if (countFireDelta)
+
+        
+        if (countFireDelta) // Count delay for next shot
         {
             fireDelta += Time.deltaTime;
-            //Debug.Log(fireDelta + " Fire Delta");
         }
         // If (FireDelay) certain time has passed since last bullet was shot, fireDelta becomes 0 and next bullet can be shot
         if (fireDelta >= gun.GetComponent<GunScript>().FireDelay())
@@ -223,7 +211,6 @@ public class PlayerControlls : MonoBehaviour {
         {
             rb.AddRelativeForce(direction * 10);
         }
-        //Debug.Log("Walk: " + _velocity.magnitude);
     }
     void PlayerAndCameraRotation()
     {
