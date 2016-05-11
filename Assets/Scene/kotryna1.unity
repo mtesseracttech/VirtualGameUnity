@@ -4404,6 +4404,14 @@ Prefab:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 177750, guid: f28eabfa4db574043af33f51c8313597, type: 2}
+      propertyPath: m_TagString
+      value: enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 177750, guid: f28eabfa4db574043af33f51c8313597, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f28eabfa4db574043af33f51c8313597, type: 2}
   m_IsPrefabParent: 0
@@ -4664,7 +4672,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 11420656, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: FireDelay
@@ -4677,6 +4685,26 @@ Prefab:
     - target: {fileID: 12086650, guid: 319f867195784294192a84e639759558, type: 2}
       propertyPath: m_CastShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19881928, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 19881928, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 469666, guid: 319f867195784294192a84e639759558, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 319f867195784294192a84e639759558, type: 2}
@@ -5057,6 +5085,7 @@ MonoBehaviour:
   SightRange: 10000
   TargetObject: {fileID: 481164271}
   SlerpSpeed: 0.1
+  PatrolPath: {fileID: 0}
 --- !u!195 &1830821844
 NavMeshAgent:
   m_ObjectHideFlags: 0
