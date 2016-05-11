@@ -44,7 +44,7 @@ public class EnemyAgent : MonoBehaviour
 
         _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation, PatrolPath);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
-        _stateCache[typeof (AttackState)] = new AttackState(this, MuzzleFlash, BloodParticles, ImpactParticles/*childObjects.Find(child => child.name == "DroneMuzzleFlash")*/);
+        _stateCache[typeof (AttackState)] = new AttackState(this, MuzzleFlash, BloodParticles, ImpactParticles, childObjects.Find(child => child.name == "DroneTurretPoint"));
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
         _stateCache[typeof (LookoutState)] = new LookoutState(this);
 
@@ -56,11 +56,7 @@ public class EnemyAgent : MonoBehaviour
         List<GameObject> childrenObjects = new List<GameObject>();
         for (int i = 0; i < Parent.transform.childCount; i++)
         {
-            if (Parent.transform.GetChild(i).name == "DroneMuzzleFlash")
-            {
-                childrenObjects.Add(Parent.transform.GetChild(i).gameObject);
-                //_muzzleFlash = Parent.transform.GetChild(i).gameObject;
-            }
+            if (Parent.transform.GetChild(i).name == "DroneTurretPoint") childrenObjects.Add(Parent.transform.GetChild(i).gameObject);
         }
         return childrenObjects;
     }

@@ -11,7 +11,7 @@ GameObject:
   - 198: {fileID: 19884570}
   - 199: {fileID: 19999494}
   m_Layer: 0
-  m_Name: OnKillParticles1
+  m_Name: WallImpactParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

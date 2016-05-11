@@ -21,28 +21,16 @@ public class AttackState : AbstractEnemyState
     private GameObject _bloodParticles;
     private GameObject _impactParticles;
 
-    public AttackState(EnemyAgent agent, GameObject muzzleFlash, GameObject bloodParticles, GameObject impactParticles /*, GameObject bulletPrefab, GameObject particles*/) : base(agent)
+    public AttackState(EnemyAgent agent, GameObject muzzleFlash, GameObject bloodParticles, GameObject impactParticles, GameObject turretPoint) : base(agent)
     {
         random = new System.Random();
         _muzzleFlash = muzzleFlash;
-        GetTurret();
         //_gun = gun;
         //_bulletPrefab = bulletPrefab;
         _bloodParticles = bloodParticles;
         _impactParticles = impactParticles;
-    }
-
-    private void GetTurret()
-    {
-        for (int i = 0; i < _agent.Parent.transform.childCount; i++)
-        {
-            if (_agent.Parent.transform.GetChild(i).CompareTag("TurretPoint"))
-            {
-                _turret = _agent.Parent.transform.GetChild(i);
-            }
-        }
-        if (_turret != null) _turretVector = _turret.position;
-        else throw new Exception("NO TURRET WAS FOUND");
+        _turret = turretPoint.transform;
+        _turretVector = _turret.position;
     }
 
     public override void Update()
