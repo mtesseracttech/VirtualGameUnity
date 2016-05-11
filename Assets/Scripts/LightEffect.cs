@@ -42,7 +42,7 @@ namespace Assets.Scripts
         public float FluorescentFlickerMax = 0.5f;
         public float FluorescentFlicerPercent = 0.95f;
 
-        public Light light;
+        public new Light light;
         // ------------------------
         void Start()
         {
