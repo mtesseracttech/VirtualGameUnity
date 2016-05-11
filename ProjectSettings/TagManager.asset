@@ -6,6 +6,10 @@ TagManager:
   tags:
   - floor
   - enemy
+  - NavigationPoint
+  - NavigationPath
+  - TurretPoint
+  - MuzzleFlash
   layers:
   - Default
   - TransparentFX

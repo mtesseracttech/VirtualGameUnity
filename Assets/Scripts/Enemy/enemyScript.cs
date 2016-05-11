@@ -27,25 +27,14 @@ public class enemyScript : MonoBehaviour {
     void Levitate()
     {
         Vector3 stepVector = new Vector3(0, 0.002f, 0);
-        if (up)
+        if (up) gameObject.transform.position += stepVector;
+        else gameObject.transform.position -= stepVector;
+
+        upCounter += 1;
+        if (upCounter >= upLimit)
         {
-            gameObject.transform.position += stepVector;
-            upCounter += 1;
-            if (upCounter >= upLimit)
-            {
-                up = !up;
-                upCounter = 0;
-            }
-        }
-        if (!up)
-        {
-            gameObject.transform.position -= stepVector;
-            upCounter += 1;
-            if (upCounter >= upLimit)
-            {
-                up = !up;
-                upCounter = 0;
-            }
+            up = !up;
+            upCounter = 0;
         }
     }
    

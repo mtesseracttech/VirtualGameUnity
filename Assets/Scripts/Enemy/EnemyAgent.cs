@@ -14,7 +14,16 @@ public class EnemyAgent : MonoBehaviour
     public NavigationPath PatrolPath = null;
     //public GameObject Gun;
     //public GameObject BulletPrefab;
-    //public GameObject PlayerImpactParticles;
+    public GameObject MuzzleFlash;
+    public GameObject BloodParticles;
+    public GameObject ImpactParticles;
+
+    Vector3 _stepVector = new Vector3(0, 0.002f, 0);
+    private bool _movingUp = false;
+    private int _upLimit = 50;
+    private int _upCounter = 0;
+
+
 
     public NavMeshAgent NavAgent { get; set; }
     public Rigidbody Parent { get; private set; }
@@ -31,13 +40,29 @@ public class EnemyAgent : MonoBehaviour
         Target = TargetObject.GetComponent<Rigidbody>();
         NavAgent = GetComponent<NavMeshAgent>();
 
+        List<GameObject> childObjects = GetChildrenComponents();
+
         _stateCache[typeof (PatrolState)] = new PatrolState(this, Parent.rotation, PatrolPath);
         _stateCache[typeof (ChaseState)] = new ChaseState(this);
-        _stateCache[typeof (AttackState)] = new AttackState(this);
+        _stateCache[typeof (AttackState)] = new AttackState(this, MuzzleFlash, BloodParticles, ImpactParticles/*childObjects.Find(child => child.name == "DroneMuzzleFlash")*/);
         _stateCache[typeof (ReturnState)] = new ReturnState(this, Parent.position, Parent.rotation);
         _stateCache[typeof (LookoutState)] = new LookoutState(this);
 
         SetState(typeof (PatrolState));
+    }
+
+    private List<GameObject> GetChildrenComponents()
+    {
+        List<GameObject> childrenObjects = new List<GameObject>();
+        for (int i = 0; i < Parent.transform.childCount; i++)
+        {
+            if (Parent.transform.GetChild(i).name == "DroneMuzzleFlash")
+            {
+                childrenObjects.Add(Parent.transform.GetChild(i).gameObject);
+                //_muzzleFlash = Parent.transform.GetChild(i).gameObject;
+            }
+        }
+        return childrenObjects;
     }
 
     public void SetState(Type pState)
@@ -53,8 +78,9 @@ public class EnemyAgent : MonoBehaviour
     private void FixedUpdate()
     {
         DebugCode();
-        _state.Update();
+        Levitate();
         SetSeeTarget();
+        _state.Update();
     }
 
     private void SetSeeTarget()
@@ -106,5 +132,34 @@ public class EnemyAgent : MonoBehaviour
         return false;
     }
 
-    public void CreateParticles(GameObject particles, Vector3 position) {Instantiate(particles, position, Quaternion.identity);}
+    public void CreateParticles(GameObject particles, Vector3 position)
+    {
+        Instantiate(particles, position, Quaternion.identity);
+    }
+
+    public void CreateParticlesRotated(GameObject particles, Vector3 position, Quaternion rotation)
+    {
+        Instantiate(particles, position, rotation);
+    }
+
+    void Levitate()
+    {
+        if (_movingUp)
+        {
+            Parent.transform.position += _stepVector;
+            Debug.Log("Moving Up");
+        }
+        else
+        {
+            Debug.Log("Moving Down");
+            Parent.transform.position -= _stepVector;
+        }
+
+        _upCounter += 1;
+        if (_upCounter >= _upLimit)
+        {
+            _movingUp = !_movingUp;
+            _upCounter = 0;
+        }
+    }
 }

@@ -27,12 +27,17 @@ public class PatrolState : AbstractEnemyState
     {
         if (_agent.EnteredNewState)
         {
-            if(Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
             if (_path != null)
             {
                 _currentTarget = _path[0];
-                _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y, _currentTarget.y));
+                _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y,
+                    _currentTarget.y));
                 _agent.NavAgent.Resume();
+                _angleAlignedFirstTime = true;
+            }
+            else
+            {
+                if (Quaternion.Angle(_agent.Parent.transform.rotation, _originalRotation) > 0.1f) _angleAlignedFirstTime = false;
             }
             _agent.EnteredNewState = false;
             
@@ -63,7 +68,7 @@ public class PatrolState : AbstractEnemyState
     private void WalkInCircles()
     {
         _agent.Parent.transform.Rotate(0, 1.5f, 0);
-        _agent.Parent.transform.Translate(0, 0, 0.01f);
+        //_agent.Parent.transform.Translate(0, 0, 0.01f);
     }
 
     private void FollowPath()

@@ -40,6 +40,9 @@ public class PlayerControls : MonoBehaviour {
     private int _upwardsSpeed = 0;
 
     private bool _grounded = true;
+    public int MaxSpeed = 5;
+    public int MaxJumpSpeed = 10;
+
     ////////////////////////////////////////////////////////////////////
 
     ////////////// Variables used for player and camera rotation ///////
@@ -205,7 +208,7 @@ public class PlayerControls : MonoBehaviour {
         Vector3 _velocity = Rb.velocity;
         if (Input.GetKey(KeyCode.Space) && _grounded)
         {
-            _upwardsSpeed = 10;
+            _upwardsSpeed = MaxJumpSpeed;
             _grounded = false;
         }
         else
@@ -237,9 +240,9 @@ public class PlayerControls : MonoBehaviour {
             _sidewaysSpeed = 0;
         }
         Vector3 direction = new Vector3(_sidewaysSpeed, _upwardsSpeed, _forwardSpeed);
-        if (Rb.velocity.magnitude <= 1)
+        if (Rb.velocity.magnitude <= MaxSpeed)
         {
-            Rb.AddRelativeForce(direction * 10);
+            Rb.AddRelativeForce(direction * MaxSpeed * 10);
         }
         //Debug.Log("Walk: " + _velocity.magnitude);
     }

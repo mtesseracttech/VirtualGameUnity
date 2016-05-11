@@ -34,10 +34,12 @@ public class ReturnState : AbstractEnemyState
         {
             //Debug.Log(Vector3.Distance(_agent.Parent.position, _originalPoint));
             //if (Vector3.Distance(_agent.Parent.position, _originalPoint) < 0.1f)
+            Debug.Log(_parentXZ);
             _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
-            _targetXZ.Set(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
-            Debug.Log("Distance from starting point: " + Vector2.Distance(_targetXZ, _parentXZ));
-            if (Vector2.Distance(_targetXZ, _parentXZ) < 0.01f)
+            _targetXZ.Set(_originalPoint.x, _originalPoint.z);
+            Debug.Log("Distance from starting point: " + Vector2.Distance(_parentXZ, _targetXZ));
+            //if (Vector3.Distance(_agent.Parent.position, _originalPoint) < 0.1f)
+            if (Vector2.Distance(_parentXZ, _targetXZ) < 0.1f)
             {
                 _agent.Parent.position = _originalPoint;
                 _agent.NavAgent.Stop();
