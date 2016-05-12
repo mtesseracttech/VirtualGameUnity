@@ -3,22 +3,20 @@ using UnityEngine;
 
 public class PatrolState : AbstractEnemyState
 {
-    private Quaternion _originalRotation;
-    private bool _angleAlignedFirstTime;
-    private float _slerpSpeed = 0.1f;
     private List<Vector2> _path;
+    private Quaternion _originalRotation;
     private Vector2 _currentPos;
-    private int _currentPathPoint;
     private Vector2 _currentTarget;
 
-    
+    private bool _angleAlignedFirstTime;
+    private int _currentPathPoint;
+    private float _slerpSpeed = 0.1f;
+
 
     public PatrolState(EnemyAgent agent, Quaternion originalRotation, NavigationPath patrolPath = null) : base(agent)
     {
         if (patrolPath != null)
         {
-            Debug.Log("Getting Patrol Path");
-            Debug.Log("PatrolPath.Path = " + patrolPath.Path);
             _path = patrolPath.Path;
             _currentPos = new Vector2(_agent.Parent.position.x, _agent.Parent.position.z);
         }
@@ -29,11 +27,8 @@ public class PatrolState : AbstractEnemyState
     {
         if (_agent.EnteredNewState)
         {
-            Debug.Log("Entering Patrol State FRESH!");
-            //Debug.Log(_path);
             if (_path != null)
             {
-                Debug.Log("PATH IS NOT NULL!");
                 _currentTarget = _path[0];
                 _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y,
                     _currentTarget.y));
@@ -65,15 +60,14 @@ public class PatrolState : AbstractEnemyState
             else
             {
                 if (_path != null) FollowPath();
-                else WalkInCircles();
+                else RotateAroundAxis();
             }
         }
     }
 
-    private void WalkInCircles()
+    private void RotateAroundAxis()
     {
         _agent.Parent.transform.Rotate(0, 1.5f, 0);
-        //_agent.Parent.transform.Translate(0, 0, 0.01f);
     }
 
     private void FollowPath()
@@ -84,7 +78,6 @@ public class PatrolState : AbstractEnemyState
             Debug.Log("REACHED THE POINT");
             _currentTarget = NextPoint();
             _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y, _currentTarget.y));
-
         }
     }
 
@@ -92,10 +85,7 @@ public class PatrolState : AbstractEnemyState
     {
         Debug.Log("Picking Next Point!");
         _currentPathPoint++;
-        if (_currentPathPoint >= _path.Count)
-        {
-            _currentPathPoint = 0;
-        }
+        if (_currentPathPoint >= _path.Count) _currentPathPoint = 0;
         return _path[_currentPathPoint];
     }
 }

@@ -83,10 +83,13 @@ public class EnemyAgent : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        DebugCode();
-        Levitate();
-        SetSeeTarget();
-        _state.Update();
+        if (Parent != null)
+        {
+            DebugCode();
+            Levitate();
+            SetSeeTarget();
+            _state.Update();
+        }
     }
 
     private void SetSeeTarget()
@@ -118,16 +121,17 @@ public class EnemyAgent : MonoBehaviour
     private bool LookForTarget()
     {
         var differenceVec = Target.transform.position - Parent.transform.position;
-        //Debug.Log(differenceVec.magnitude);
+
         if (differenceVec.magnitude < SightRange) //Sees if Target is even in range
         {
             var targetAngle = Vector3.Angle(differenceVec, Parent.transform.forward);
-            //Debug.Log("Angle between Parent and Target: " + targetAngle);
-            if (targetAngle > SightConeAngle/2)
+
+            if (targetAngle > SightConeAngle / 2)
             {
                 return false; //Sees if Target is in sight cone
             }
             RaycastHit hit;
+
             if (Physics.Raycast(Parent.position, differenceVec, out hit, differenceVec.magnitude))
             {
                 Debug.Log(hit.collider.gameObject.tag);
