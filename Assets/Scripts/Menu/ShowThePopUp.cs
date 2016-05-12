@@ -7,8 +7,9 @@ public class ShowThePopUp : MonoBehaviour {
 
 
     private bool visible = false;
-    private float timeRemaining = 6.0f;
+    private float timeRemaining = 5.0f;
     int interval = 1;
+
     void Start()
     {
         visible = false;
@@ -26,7 +27,6 @@ public class ShowThePopUp : MonoBehaviour {
                 UpdateEverySecond();
             }
         }
-   
     }
 
     void UpdateEverySecond()
@@ -38,12 +38,12 @@ public class ShowThePopUp : MonoBehaviour {
   void OnTriggerEnter()
     {
          visible = true;
-        Debug.Log("Lopas iejo");
+        Debug.Log("Lopas iejo"); 
     }
 
     void OnTriggerExit()
     {
         visible = false;
-        Debug.Log("Lopas isejo");
+        Debug.Log("Lopas");
     }
 }

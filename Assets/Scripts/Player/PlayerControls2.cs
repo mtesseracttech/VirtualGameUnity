@@ -25,9 +25,10 @@ public class PlayerControls2 : MonoBehaviour {
     private Vector3 prevRayCastPoint;
 
     public ParticleSystem SmokeParticleSystem;
-    public GameObject hitParticles;
-    public GameObject objectHitEffect;
+    public GameObject EnemyHitEffect;
+    public GameObject DefaultHit;
     private LineRenderer lineRenderer;
+
     public Transform gunEnd;
     private WaitForSeconds shotLength = new WaitForSeconds(.07f);
     private AudioSource source;
@@ -36,6 +37,9 @@ public class PlayerControls2 : MonoBehaviour {
     ////////////// Variables used for player movement //////////////////
     public Rigidbody rb;
     public int MaxMagnitude = 3;
+    private float _maxMagnitude;
+    public int accelerationValue;
+
     public float SlowDownFactor = 0.945f;
     public int MovementSpeed = 1;
     public float JumpSpeed = 250;
@@ -55,14 +59,16 @@ public class PlayerControls2 : MonoBehaviour {
     public float maximumX = 360F;
     public float minimumY = -90F;
     public float maximumY = 90F;
-    float rotationY = 0F;
+    float rotationX = 0F;
     ///////////////////////////////////////////////////////////////////
 	/// 
 	void Start()
 	{
 		MaxMagnitude = 3;
-		SlowDownFactor = 0.945f;
-		MovementSpeed = 1;
+        _maxMagnitude = MaxMagnitude;
+	    accelerationValue = 25;
+        SlowDownFactor = 0.945f;
+		MovementSpeed = 2;
 		JumpSpeed = 250;
 		lineRenderer = GetComponent<LineRenderer>();
 		source = GetComponent<AudioSource>();
@@ -77,7 +83,7 @@ public class PlayerControls2 : MonoBehaviour {
 	}
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             slowMotion = !slowMotion;
         }
@@ -169,14 +175,17 @@ public class PlayerControls2 : MonoBehaviour {
                 {
                     Destroy(hitInfo.collider.gameObject);
                     // Instantiating particles on enemy position
-                    Vector3 particlesPos = hitInfo.collider.gameObject.transform.position ;
-                    Instantiate(hitParticles, particlesPos, Quaternion.identity);
+                   // Vector3 particlesPos = hitInfo.collider.gameObject.transform.position ;
+                    //Instantiate(hitParticles, particlesPos, Quaternion.identity);
+                    lineRenderer.SetPosition(0, gunEnd.position);
+                    lineRenderer.SetPosition(1, hitInfo.point);
+                    Instantiate(EnemyHitEffect, hitInfo.point, Quaternion.identity);
                 }
                 else
                 {
                      lineRenderer.SetPosition(0, gunEnd.position);
                      lineRenderer.SetPosition(1, hitInfo.point);
-                     Instantiate(hitParticles, hitInfo.point, Quaternion.identity);
+                     Instantiate(DefaultHit, hitInfo.point, Quaternion.identity);
                 }
                 StartCoroutine(ShotEffect());
             }
@@ -219,6 +228,10 @@ public class PlayerControls2 : MonoBehaviour {
         if (Input.GetKey(KeyCode.W))
         {
             ForwardSpeed = MovementSpeed;
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                ForwardSpeed *= 2;
+            }
         }
         else if (Input.GetKey(KeyCode.S))
         {
@@ -244,42 +257,71 @@ public class PlayerControls2 : MonoBehaviour {
         Vector3 direction = new Vector3(SidewaysSpeed, 0, ForwardSpeed);
         if (direction == Vector3.zero)
         {
-            rb.velocity = rb.velocity * SlowDownFactor;
-        }
-        else
-        {
-            if (_velocity.magnitude <= MaxMagnitude)
-            {
-                rb.AddRelativeForce(direction * 50);
-            }
-            if (_velocity.magnitude > MaxMagnitude)
+            if (grounded)
             {
                 rb.velocity = rb.velocity * SlowDownFactor;
             }
+            else
+            {
+                rb.velocity = rb.velocity * (SlowDownFactor + 0.03f);
+            }
         }
+        else
+        {
+            if (grounded)
+            {
+                _maxMagnitude = MaxMagnitude;
+            }
+            else
+            {
+                _maxMagnitude = MaxMagnitude / 2;
+            }
+            if (_velocity.magnitude <= _maxMagnitude)
+            {
+                rb.AddRelativeForce(direction * accelerationValue);
+            }
+            if (_velocity.magnitude > _maxMagnitude)
+            {
+                if (grounded)
+                {
+                    rb.velocity = rb.velocity * SlowDownFactor;
+                }
+                else
+                {
+                    rb.velocity = rb.velocity * (SlowDownFactor + 0.03f);
+                }
+            }
+        }
+        //Debug.Log(rb.velocity.magnitude);
     }
+
     void PlayerAndCameraRotation()
     {
+        // Rotation available on X-Axis and Y-Axis
         if (axes == RotationAxes.MouseXAndY)
         {
-            float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
+            //Value for angle on Y-Axis
+            float rotationY = transform.localEulerAngles.y + Input.GetAxis("Mouse X")*sensitivityX;
 
-            rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
-            rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
+            //Value for angle on X-Axis
+            rotationX += Input.GetAxis("Mouse Y")*sensitivityY;
+            rotationX = Mathf.Clamp(rotationX, minimumY, maximumY);
 
-            transform.localEulerAngles = new Vector3(0, rotationX, 0);
-            camera.localEulerAngles = new Vector3(-rotationY, 0, 0);
+            //Player's rotation together with the camera (Y-Axis)
+            transform.localEulerAngles = new Vector3(0, rotationY, 0);
+            // Camera's rotation Up a Down (X-Axis)
+            camera.localEulerAngles = new Vector3(-rotationX, 0, 0);
         }
+        // Rotation available only on Y-Axis
         else if (axes == RotationAxes.MouseX)
         {
-            transform.Rotate(0, Input.GetAxis("Mouse X") * sensitivityX, 0);
+            // Rotates the player on Y-Axis
+            transform.Rotate(0, Input.GetAxis("Mouse X")*sensitivityX, 0);
         }
     }
+
     public bool Grounded()
     {
         return grounded;
-    }
-
-    
-       
+    }   
 }
