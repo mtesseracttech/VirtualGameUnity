@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-public class SharedConscious : MonoBehaviour
+public class SharedEnemyAI : MonoBehaviour
 {
     private List<EnemyAgent> _agents;
 
@@ -32,7 +32,10 @@ public class SharedConscious : MonoBehaviour
 
     private void NotifyAgentOfPos(Vector3 lastSeenLocation, EnemyAgent agent)
     {
-        agent.LastSeenTargetPosition = lastSeenLocation;
+        if (!(agent.GetState() is ChaseState))
+        {
+            agent.LastSeenTargetPosition = lastSeenLocation;
+        }
     }
 
     public void SearchInRangeAgent(EnemyAgent notifierAgent, int range)
@@ -70,5 +73,10 @@ public class SharedConscious : MonoBehaviour
             }
         }
         Debug.Log(searchingAgents + " other agents start searching!");
+    }
+
+    public void UnRegisterAgent(EnemyAgent destroyedAgent)
+    {
+        _agents.Remove(destroyedAgent);
     }
 }

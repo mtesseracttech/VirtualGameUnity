@@ -55,6 +55,11 @@ public class PlayerControls2 : MonoBehaviour {
     public float MaximumY = 90F;
     private float _rotationY = 0f;
 
+    // Variables for interaction with Enemy AI
+    public SharedEnemyAI SharedEnemyAI;
+
+
+
     public enum RotationAxes
     {
         MouseXAndY = 0, MouseX = 1, MouseY = 2
@@ -179,7 +184,7 @@ public class PlayerControls2 : MonoBehaviour {
                 }
                 StartCoroutine(ShotEffect());
             }
-
+            SharedEnemyAI.SearchInRangeVec3(_hitInfo.point, 10);
             // Instantiating a bullet for visual effects
             Vector3 gunPos = Gun.transform.position/*new Vector3(camera.position.x, camera.position.y-0.125f, camera.position.z)*/;
             Vector3 gunDirection = Gun.transform.forward;

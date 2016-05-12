@@ -26,13 +26,6 @@ public class ReturnState : AbstractEnemyState
             _agent.EnteredNewState = false;
         }
 
-        if (Input.GetKey(KeyCode.N))
-        {
-            SharedConscious temp =_agent.SharedConsciousnessEntity.GetComponent<SharedConscious>();
-            //temp.NotifyOthersOfPosition(_agent.LastSeenTargetPosition);
-            temp.SearchInRangeAgent(_agent, 30);
-        }
-
         if (_agent.SeesTarget)
         {
             _agent.SetState(typeof (AttackState));

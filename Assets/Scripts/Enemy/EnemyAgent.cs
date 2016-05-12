@@ -17,8 +17,9 @@ public class EnemyAgent : MonoBehaviour
     public GameObject MuzzleFlash;
     public GameObject BloodParticles;
     public GameObject ImpactParticles;
-    public GameObject SharedConsciousnessEntity;
-    private SharedConscious _sharedConscious;
+    public GameObject SharedAI;
+    public int OnDestroyHelpRange = 20;
+    private SharedEnemyAI _sharedAI;
 
     private Vector3 _stepVector = new Vector3(0, 0.002f, 0);
     private bool _movingUp = false;
@@ -41,8 +42,8 @@ public class EnemyAgent : MonoBehaviour
         Parent = GetComponent<Rigidbody>();
         Target = TargetObject.GetComponent<Rigidbody>();
         NavAgent = GetComponent<NavMeshAgent>();
-        _sharedConscious = SharedConsciousnessEntity.GetComponent<SharedConscious>();
-        _sharedConscious.RegisterAgent(this);
+        _sharedAI = SharedAI.GetComponent<SharedEnemyAI>();
+        _sharedAI.RegisterAgent(this);
 
         List<GameObject> childObjects = GetChildrenComponents();
 
@@ -72,6 +73,11 @@ public class EnemyAgent : MonoBehaviour
         NavAgent.Stop();
         SetSeeTarget();
         _state = _stateCache[pState];
+    }
+
+    public AbstractEnemyState GetState()
+    {
+        return _state;
     }
 
     // Update is called once per frame
@@ -161,5 +167,12 @@ public class EnemyAgent : MonoBehaviour
             _movingUp = !_movingUp;
             _upCounter = 0;
         }
+    }
+
+    void OnDestroy()
+    {
+        Debug.Log("Enemy Destroyed, Emergency Search Initiated!");
+        _sharedAI.SearchInRangeAgent(this, OnDestroyHelpRange);
+        _sharedAI.UnRegisterAgent(this);
     }
 }

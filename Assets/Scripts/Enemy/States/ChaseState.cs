@@ -5,6 +5,8 @@ public class ChaseState : AbstractEnemyState
 {
     private float _chaseSpeed = 0.01f;
     private float _slerpSpeed = 0.1f;
+    private float _timeSinceStartChase;
+    private Vector3 _oldPos = Vector3.zero;
     private Vector2 _targetXZ;
     private Vector2 _parentXZ;
 
@@ -21,9 +23,9 @@ public class ChaseState : AbstractEnemyState
             _targetXZ = new Vector2(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
             _parentXZ = new Vector2(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _agent.NavAgent.Resume();
+            _timeSinceStartChase = 0;
             _agent.EnteredNewState = false;
         }
-
         if (_agent.SeesTarget)
         {
             _agent.SetState(typeof(AttackState));
@@ -32,13 +34,20 @@ public class ChaseState : AbstractEnemyState
         {
             _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _targetXZ.Set(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
-            Debug.Log("Distance from LastSeenPoint: " + Vector2.Distance(_targetXZ, _parentXZ));
             if(Vector2.Distance(_targetXZ, _parentXZ) < 0.01f)
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
                 _agent.SetState(typeof(LookoutState));
             }
+            else if (_oldPos == _agent.Parent.transform.position && _timeSinceStartChase > 1.0f)
+            {
+                Debug.Log("I am standing still, I probably can't reach the player!");
+                _agent.SetState(typeof(LookoutState));
+            }
         }
+        _oldPos = _agent.Parent.transform.position;
+        _timeSinceStartChase += Time.deltaTime;
+        Debug.Log(_timeSinceStartChase);
     }
 }
 
