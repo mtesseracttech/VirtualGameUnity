@@ -276,8 +276,12 @@ public class PlayerControls2 : MonoBehaviour {
         else if (Axes == RotationAxes.MouseX) transform.Rotate(0, Input.GetAxis("Mouse X") * SensitivityX, 0);
     }
 
-    public bool Grounded()
+    public bool Grounded
     {
-       return _grounded;
+        get
+        {
+            return _grounded;
+        }
+       
     }
 }
