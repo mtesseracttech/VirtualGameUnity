@@ -22,6 +22,18 @@ public class PlayerControls2 : MonoBehaviour {
     public GameObject Crosshair;
 
     public ParticleSystem SmokeParticleSystem;
+
+    private WaitForSeconds shotLength = new WaitForSeconds(.07f);
+    private AudioSource source;
+
+    ////////////////////////////////////////////////////////////////////
+    ////////////// Variables used for player movement //////////////////
+    public Rigidbody rb;
+    public int MaxMagnitude = 3;
+    private float _maxMagnitude;
+    public int accelerationValue;
+
+
     public GameObject EnemyHitParticles;
     public GameObject DefaultHitParticles;
 
@@ -34,6 +46,7 @@ public class PlayerControls2 : MonoBehaviour {
     private bool _countFireDelta;
 
     // Variables used for player movement
+
     public int MovementSpeed = 1;
     public float JumpSpeed = 250;
     public float SlowDownFactor = 0.945f;
@@ -43,6 +56,11 @@ public class PlayerControls2 : MonoBehaviour {
     private float _sidewaysSpeed = 0f;
 
     private bool _grounded = true;
+
+    public enum RotationAxes
+    {
+        MouseXAndY = 0, MouseX = 1, MouseY = 2
+    }
 
     // Variables used for player and camera rotation
     public Transform Camera;
@@ -55,30 +73,16 @@ public class PlayerControls2 : MonoBehaviour {
     public float MaximumY = 90F;
     private float _rotationY = 0f;
 
-    // Variables for interaction with Enemy AI
-    public SharedEnemyAI SharedEnemyAI;
-
-
-
-    public enum RotationAxes
-    {
-        MouseXAndY = 0, MouseX = 1, MouseY = 2
-    }
+   
 
     void Start()
-	{
+    {
         //Getting Components
         _rigidBody = GetComponent<Rigidbody>();
         _source = GetComponent<AudioSource>();
         _lineRenderer = GetComponent<LineRenderer>();
-
-		_deltaTime = 0f;
-        _fireDelta = 0f;
-        _countFireDelta = false;
-		_slowMotion = false;
-
-        _rigidBody.freezeRotation = true;
     }
+
     void Update()
     {
         SlowdownCode();
@@ -98,7 +102,7 @@ public class PlayerControls2 : MonoBehaviour {
 
     private void SlowdownCode()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift)) _slowMotion = !_slowMotion;
+        if (Input.GetKeyDown(KeyCode.LeftCommand)) _slowMotion = !_slowMotion;
         if (_slowMotion) Time.timeScale = 0.5f;
         else Time.timeScale = 1f;
         _deltaTime += (Time.deltaTime - _deltaTime) * 0.1f;
@@ -134,7 +138,10 @@ public class PlayerControls2 : MonoBehaviour {
         {           
             if (_hitInfo.point != _prevRayCastPoint)
             {
-                Gun.transform.LookAt(_hitInfo.point);
+                if ((Camera.transform.position - _hitInfo.point).magnitude >= 2f)
+                {
+                    Gun.transform.LookAt(_hitInfo.point);
+                }
                 _prevRayCastPoint = _hitInfo.point;
             }
             Debug.DrawLine(Camera.transform.position, _hitInfo.point,Color.blue);
@@ -172,10 +179,11 @@ public class PlayerControls2 : MonoBehaviour {
                 if (_hitInfo.collider.gameObject.tag == "enemy")
                 {
                     Destroy(_hitInfo.collider.gameObject);
-                    // Instantiating particles on enemy position
-                    Vector3 particlesPos = _hitInfo.collider.gameObject.transform.position ;
-                    Instantiate(EnemyHitParticles, particlesPos, Quaternion.identity);
+                    _lineRenderer.SetPosition(0, GunEnd.position);
+                    _lineRenderer.SetPosition(1, _hitInfo.point);
+                    Instantiate(DefaultHitParticles, _hitInfo.point, Quaternion.identity);
                 }
+               
                 else
                 {
                      _lineRenderer.SetPosition(0, GunEnd.position);
@@ -184,7 +192,7 @@ public class PlayerControls2 : MonoBehaviour {
                 }
                 StartCoroutine(ShotEffect());
             }
-            SharedEnemyAI.SearchInRangeVec3(_hitInfo.point, 10);
+
             // Instantiating a bullet for visual effects
             Vector3 gunPos = Gun.transform.position/*new Vector3(camera.position.x, camera.position.y-0.125f, camera.position.z)*/;
             Vector3 gunDirection = Gun.transform.forward;
@@ -213,6 +221,7 @@ public class PlayerControls2 : MonoBehaviour {
 
     private void PlayerMovement()
     {
+
         Vector3 velocity = _rigidBody.velocity;
         if (_grounded && Input.GetKeyDown(KeyCode.Space))
         {
@@ -220,7 +229,14 @@ public class PlayerControls2 : MonoBehaviour {
             _rigidBody.AddRelativeForce(new Vector3(0, JumpSpeed, 0));
         }
 
-        if (Input.GetKey(KeyCode.W)) _forwardSpeed = MovementSpeed;
+        if (Input.GetKey(KeyCode.W))
+        {
+            _forwardSpeed = MovementSpeed;
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                _forwardSpeed *= 2;
+            }
+        }
         else if (Input.GetKey(KeyCode.S)) _forwardSpeed = -MovementSpeed;
         else _forwardSpeed = 0;
 
@@ -246,6 +262,7 @@ public class PlayerControls2 : MonoBehaviour {
 
     void PlayerAndCameraRotation()
     {
+
         if (Axes == RotationAxes.MouseXAndY)
         {
             float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * SensitivityX;
@@ -265,5 +282,6 @@ public class PlayerControls2 : MonoBehaviour {
         {
             return _grounded;
         }
+       
     }
 }

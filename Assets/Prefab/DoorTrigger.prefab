@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 433704}
   - 114: {fileID: 11436948}
+  - 65: {fileID: 6577294}
   m_Layer: 0
   m_Name: DoorTrigger
   m_TagString: Untagged
@@ -23,11 +24,23 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 154862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 19.5, z: 0}
-  m_LocalScale: {x: 2, y: 1, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!65 &6577294
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154862}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11436948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -39,8 +52,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e48b570af6e942cb85fcd826b896d4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door1: {fileID: 0}
-  door2: {fileID: 0}
+  Door1: {fileID: 0}
+  Door2: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
