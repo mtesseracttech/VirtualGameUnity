@@ -17,8 +17,10 @@ public class EnemyAgent : MonoBehaviour
     public GameObject MuzzleFlash;
     public GameObject BloodParticles;
     public GameObject ImpactParticles;
+    public GameObject SharedConsciousnessEntity;
+    private SharedConscious _sharedConscious;
 
-    Vector3 _stepVector = new Vector3(0, 0.002f, 0);
+    private Vector3 _stepVector = new Vector3(0, 0.002f, 0);
     private bool _movingUp = false;
     private int _upLimit = 50;
     private int _upCounter = 0;
@@ -29,7 +31,7 @@ public class EnemyAgent : MonoBehaviour
     public Rigidbody Parent { get; private set; }
     public Rigidbody Target { get; private set; }
     public bool EnteredNewState { get; set; }
-    public Vector3 LastSeenTargetPosition { get; private set; }
+    public Vector3 LastSeenTargetPosition { get; set; }
     public bool SeesTarget { get; private set; }
 
 
@@ -39,6 +41,8 @@ public class EnemyAgent : MonoBehaviour
         Parent = GetComponent<Rigidbody>();
         Target = TargetObject.GetComponent<Rigidbody>();
         NavAgent = GetComponent<NavMeshAgent>();
+        _sharedConscious = SharedConsciousnessEntity.GetComponent<SharedConscious>();
+        _sharedConscious.RegisterAgent(this);
 
         List<GameObject> childObjects = GetChildrenComponents();
 
