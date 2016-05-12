@@ -26,19 +26,21 @@ public class ReturnState : AbstractEnemyState
             _agent.EnteredNewState = false;
         }
 
+        if (Input.GetKey(KeyCode.N))
+        {
+            SharedConscious temp =_agent.SharedConsciousnessEntity.GetComponent<SharedConscious>();
+            //temp.NotifyOthersOfPosition(_agent.LastSeenTargetPosition);
+            temp.SearchInRangeAgent(_agent, 30);
+        }
+
         if (_agent.SeesTarget)
         {
             _agent.SetState(typeof (AttackState));
         }
         else
         {
-            //Debug.Log(Vector3.Distance(_agent.Parent.position, _originalPoint));
-            //if (Vector3.Distance(_agent.Parent.position, _originalPoint) < 0.1f)
-            Debug.Log(_parentXZ);
             _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _targetXZ.Set(_originalPoint.x, _originalPoint.z);
-            Debug.Log("Distance from starting point: " + Vector2.Distance(_parentXZ, _targetXZ));
-            //if (Vector3.Distance(_agent.Parent.position, _originalPoint) < 0.1f)
             if (Vector2.Distance(_parentXZ, _targetXZ) < 0.1f)
             {
                 _agent.Parent.position = _originalPoint;

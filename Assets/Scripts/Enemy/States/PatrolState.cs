@@ -17,6 +17,8 @@ public class PatrolState : AbstractEnemyState
     {
         if (patrolPath != null)
         {
+            Debug.Log("Getting Patrol Path");
+            Debug.Log("PatrolPath.Path = " + patrolPath.Path);
             _path = patrolPath.Path;
             _currentPos = new Vector2(_agent.Parent.position.x, _agent.Parent.position.z);
         }
@@ -27,8 +29,11 @@ public class PatrolState : AbstractEnemyState
     {
         if (_agent.EnteredNewState)
         {
+            Debug.Log("Entering Patrol State FRESH!");
+            //Debug.Log(_path);
             if (_path != null)
             {
+                Debug.Log("PATH IS NOT NULL!");
                 _currentTarget = _path[0];
                 _agent.NavAgent.SetDestination(new Vector3(_currentTarget.x, _agent.Parent.transform.position.y,
                     _currentTarget.y));

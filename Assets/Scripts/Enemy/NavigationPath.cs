@@ -5,11 +5,16 @@ public class NavigationPath : MonoBehaviour
 {
     public List<Vector2> Path { get; private set; }
 
-    // Use this for initialization
-    private void Start()
+    private void Awake()
     {
         Path = new List<Vector2>();
         FillNavPointList();
+    }
+
+    // Use this for initialization
+    private void Start()
+    {
+
     }
 
     private void FillNavPointList()
@@ -20,6 +25,7 @@ public class NavigationPath : MonoBehaviour
             tempVec = transform.GetChild(i).transform.position;
             Path.Add(new Vector2(tempVec.x, tempVec.z));
         }
+
     }
 
     // Update is called once per frame
