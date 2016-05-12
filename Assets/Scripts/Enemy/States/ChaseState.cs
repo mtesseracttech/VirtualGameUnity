@@ -34,6 +34,7 @@ public class ChaseState : AbstractEnemyState
         {
             _parentXZ.Set(_agent.Parent.transform.position.x, _agent.Parent.transform.position.z);
             _targetXZ.Set(_agent.LastSeenTargetPosition.x, _agent.LastSeenTargetPosition.z);
+            Debug.Log("Distance to Target: " + Vector2.Distance(_targetXZ, _parentXZ));
             if(Vector2.Distance(_targetXZ, _parentXZ) < 0.01f)
             {
                 _agent.Parent.position = _agent.LastSeenTargetPosition;
@@ -42,12 +43,12 @@ public class ChaseState : AbstractEnemyState
             else if (_oldPos == _agent.Parent.transform.position && _timeSinceStartChase > 1.0f)
             {
                 Debug.Log("I am standing still, I probably can't reach the player!");
-                _agent.SetState(typeof(LookoutState));
+                //_agent.SetState(typeof(LookoutState));
             }
         }
         _oldPos = _agent.Parent.transform.position;
         _timeSinceStartChase += Time.deltaTime;
-        Debug.Log(_timeSinceStartChase);
+        //Debug.Log(_timeSinceStartChase);
     }
 }
 

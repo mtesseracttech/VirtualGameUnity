@@ -1,41 +1,57 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class enemyScript : MonoBehaviour {
-    //////// Levitate variables ////////
-    private bool up;
-    private int upLimit;
-    private int upCounter;
-    ////////////////////////////////////
-    //////// Laser variables ///////////
-    public LineRenderer laser;
-    public GameObject player;
-    ////////////////////////////////////
-    // Use this for initialization
-    void Start () {
-        up = false;
-        upLimit = 50;
-        upCounter = 0;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        Levitate();
-        laser.SetPosition(1, transform.InverseTransformVector(player.transform.position - transform.position));
-        transform.LookAt(player.transform);
-    }
-    void Levitate()
+public class EnemyScript : MonoBehaviour
+{
+    public GameObject Player;
+    public LineRenderer LaserLine;
+    private Vector3 _turretPoint;
+    private Transform _turret;
+    private EnemyAgent _agent;
+    private Renderer _laserRenderer;
+
+
+    void Awake()
     {
-        Vector3 stepVector = new Vector3(0, 0.002f, 0);
-        if (up) gameObject.transform.position += stepVector;
-        else gameObject.transform.position -= stepVector;
+        _laserRenderer = LaserLine.transform.GetComponent<Renderer>();
+        _agent = GetComponent<EnemyAgent>();
+        GetChildrenComponents();
+    }
 
-        upCounter += 1;
-        if (upCounter >= upLimit)
+    private void Update()
+    {
+        Laser();
+    }
+
+    private void Laser()
+    {
+        _turretPoint = _turret.transform.position;
+        if (_agent.GetState() is AttackState)
         {
-            up = !up;
-            upCounter = 0;
+            Debug.Log("SHOULD BE DRAWING A LASER");
+            LaserLine.SetPosition(0, _turretPoint);
+            LaserLine.SetPosition(1, Player.transform.position);
+        }
+        else
+        {
+            //MAKE LINE INVISIBLE!!!
         }
     }
-   
+
+    // Use this for initialization
+    void Start ()
+    {
+        Debug.Log(_turretPoint);
+    }
+
+    private List<GameObject> GetChildrenComponents()
+    {
+        List<GameObject> childrenObjects = new List<GameObject>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).name == "DroneTurretPoint") _turret = transform.GetChild(i).transform;
+        }
+        return childrenObjects;
+    }
 }

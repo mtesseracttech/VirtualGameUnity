@@ -21,7 +21,7 @@ public class EnemyAgent : MonoBehaviour
     public int OnDestroyHelpRange = 20;
     private SharedEnemyAI _sharedAI;
 
-    private Vector3 _stepVector = new Vector3(0, 0.002f, 0);
+    private Vector3 _stepVector = new Vector3(0, 0.2f, 0);
     private bool _movingUp = false;
     private int _upLimit = 50;
     private int _upCounter = 0;
@@ -86,7 +86,7 @@ public class EnemyAgent : MonoBehaviour
         if (Parent != null)
         {
             DebugCode();
-            Levitate();
+            //Levitate();
             SetSeeTarget();
             _state.Update();
         }
@@ -156,13 +156,13 @@ public class EnemyAgent : MonoBehaviour
     {
         if (_movingUp)
         {
-            Parent.transform.position += _stepVector;
+            Parent.gameObject.transform.position += _stepVector;
             Debug.Log("Moving Up");
         }
         else
         {
             Debug.Log("Moving Down");
-            Parent.transform.position -= _stepVector;
+            Parent.gameObject.transform.position -= _stepVector;
         }
 
         _upCounter += 1;
