@@ -155,10 +155,10 @@ public class PlayerControls2 : MonoBehaviour {
 
     private IEnumerator ShotEffect()
     {
-        _lineRenderer.enabled = true;
+        _lineRenderer.enabled = true; // for line to show up
         _source.Play();
         yield return _shotLength;
-        _lineRenderer.enabled = false;
+        _lineRenderer.enabled = false; // for line to disapear
     }
 
     void Shoot()
@@ -166,13 +166,12 @@ public class PlayerControls2 : MonoBehaviour {
         // Enable delaycounter (fireDelta++)
         if (Input.GetMouseButton(0) && !_countFireDelta)
         {
-            _countFireDelta = true;
-            PlayMuzzleFlash();
-            
+            _countFireDelta = true; 
         }
         // Shoot a bullet if fireDelta = 0
         if (_fireDelta == 0.0f && Input.GetMouseButton(0))
         {
+            PlayMuzzleFlash();
             // Destroying enemies if rayHitInfo holds information about an enemy
             if (Physics.Raycast(_ray, out _hitInfo))
             {
@@ -181,14 +180,14 @@ public class PlayerControls2 : MonoBehaviour {
                     Destroy(_hitInfo.collider.gameObject);
                     _lineRenderer.SetPosition(0, GunEnd.position);
                     _lineRenderer.SetPosition(1, _hitInfo.point);
-                    Instantiate(DefaultHitParticles, _hitInfo.point, Quaternion.identity);
+                    Instantiate(EnemyHitParticles, _hitInfo.point, Quaternion.identity);
                 }
                
                 else
                 {
                      _lineRenderer.SetPosition(0, GunEnd.position);
                      _lineRenderer.SetPosition(1, _hitInfo.point);
-                     Instantiate(EnemyHitParticles, _hitInfo.point, Quaternion.identity);
+                     Instantiate(DefaultHitParticles, _hitInfo.point, Quaternion.identity);
                 }
                 StartCoroutine(ShotEffect());
             }
