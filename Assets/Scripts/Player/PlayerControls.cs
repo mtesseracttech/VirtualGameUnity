@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+[RequireComponent(typeof(PlayerMotor))]
 public class PlayerControls : MonoBehaviour {
-   // public Text ammunation;
+
+    public AudioSource ConcreteWalk;
+    private float _concreteWalkDelay;
+    public Text Ammunation;
     private int _ammo;
     private float _deltaTime;
     public float Range = 50;
@@ -13,6 +16,11 @@ public class PlayerControls : MonoBehaviour {
     RaycastHit _hitInfo;
     Ray _ray;
     ////////////////////////////////////////////////////////////////////
+    private bool blowback;
+    private bool backwards;
+    private int blowbackLimit;
+    private int blowbackCounter;
+
     ////////////// Variables used for raycasting and shooting //////////
     public float FireDelay;
     private float _fireDelta;
@@ -25,9 +33,10 @@ public class PlayerControls : MonoBehaviour {
     private Vector3 _prevRayCastPoint;
 
     public ParticleSystem SmokeParticleSystem;
-    public GameObject HitParticles;
-    public GameObject ObjectHitEffect;
+    public GameObject EnemyHitEffect;
+    public GameObject DefaultHit;
     private LineRenderer _lineRenderer;
+
     public Transform GunEnd;
     private readonly WaitForSeconds _shotLength = new WaitForSeconds(.07f);
     private AudioSource _source;
@@ -38,7 +47,6 @@ public class PlayerControls : MonoBehaviour {
     private int _forwardSpeed = 0;
     private int _sidewaysSpeed = 0;
     private int _upwardsSpeed = 0;
-
     private bool _grounded = true;
     public int MaxSpeed = 5;
     public int MaxJumpSpeed = 10;
@@ -46,7 +54,7 @@ public class PlayerControls : MonoBehaviour {
     ////////////////////////////////////////////////////////////////////
 
     ////////////// Variables used for player and camera rotation ///////
-    public Transform camera;
+    public new Transform camera;
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
     public RotationAxes axes = RotationAxes.MouseXAndY;
     public float SensitivityX = 15F;
@@ -56,6 +64,15 @@ public class PlayerControls : MonoBehaviour {
     public float MinimumY = -90F;
     public float MaximumY = 90F;
     float _rotationY = 0F;
+
+    [Header("MovementBehaviour settings:")]
+    [SerializeField]
+    private float _speed = 5f;
+    [SerializeField]
+    private float _sensitivity = 3f; //for camera movement
+    [SerializeField]
+    private float _runSpeed = 6f;
+    private PlayerMotor _motor;
     ///////////////////////////////////////////////////////////////////
     void Update()
     {
@@ -74,8 +91,9 @@ public class PlayerControls : MonoBehaviour {
         _deltaTime += (Time.deltaTime - _deltaTime) * 0.1f;
        // ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
         LineOfAimHandler();
-        PlayerMovement();
-        PlayerAndCameraRotation();
+      //  PlayerMovement();
+        Move();
+       // PlayerAndCameraRotation();
         Shoot();
         PickUpHandler();
     }
@@ -90,6 +108,16 @@ public class PlayerControls : MonoBehaviour {
     {
         _lineRenderer = GetComponent<LineRenderer>();
         _source = GetComponent<AudioSource>();
+        ConcreteWalk = GetComponent<AudioSource>();
+        _motor = GetComponent<PlayerMotor>();
+
+        _concreteWalkDelay = 0;
+
+        blowback = false;
+        backwards = true;
+        blowbackCounter = 0;
+        blowbackLimit = 5;
+
         _deltaTime = 0f;
         FireDelay = 1;
         _countFireDelta = false;
@@ -149,30 +177,33 @@ public class PlayerControls : MonoBehaviour {
     {
         // Enable delaycounter (fireDelta++)
         if (Input.GetMouseButton(0) && !_countFireDelta)
-        {
             _countFireDelta = true;
-            PlayMuzzleFlash();
-            
-        }
         // Shoot a bullet if fireDelta = 0
         if (_fireDelta == 0 && Input.GetMouseButton(0))
         {
+            blowback = true;
+            bool CreateImpactHole = true;
             // Destroying enemies if rayHitInfo holds information about an enemy
             if (Physics.Raycast(_ray, out _hitInfo))
             {
                 if (_hitInfo.collider.gameObject.tag == "enemy")
                 {
+                    CreateImpactHole = false;
                     Destroy(_hitInfo.collider.gameObject);
                     // Instantiating particles on enemy position
-                    Vector3 particlesPos = _hitInfo.collider.gameObject.transform.position ;
-                    Instantiate(HitParticles, particlesPos, Quaternion.identity);
+                    // Vector3 particlesPos = _hitInfo.collider.gameObject.transform.position ;
+                    // Instantiate(HitParticles, particlesPos, Quaternion.identity);
+                    _lineRenderer.SetPosition(0, GunEnd.position);
+                    _lineRenderer.SetPosition(1, _hitInfo.point);
+                    Instantiate(EnemyHitEffect, _hitInfo.point, Quaternion.identity);
                 }
                 else
                 {
                      _lineRenderer.SetPosition(0, GunEnd.position);
                      _lineRenderer.SetPosition(1, _hitInfo.point);
-                     Instantiate(HitParticles, _hitInfo.point, Quaternion.identity);
+                     Instantiate(DefaultHit, _hitInfo.point, Quaternion.identity);
                 }
+                PlayMuzzleFlash();//gun effect
                 StartCoroutine(ShotEffect());
             }
             
@@ -190,12 +221,37 @@ public class PlayerControls : MonoBehaviour {
             bullet.GetComponent<BulletScript>().SetDistance((_hitInfo.point - spawnPos).magnitude);
             ///////////////////////////////////////////////////////////////////
         }
+
+        if (blowback)
+        {
+            Vector3 stepVector = Gun.transform.forward * 0.0025125f;
+            if (backwards)
+            {
+                Gun.transform.position -= stepVector;
+                blowbackCounter += 1;
+                if (blowbackCounter >= blowbackLimit)
+                {
+                    blowbackCounter = 0;
+                    backwards = !backwards;
+                }
+            }
+            if (!backwards)
+            {
+                Gun.transform.position += stepVector;
+                blowbackCounter += 1;
+                if (blowbackCounter >= blowbackLimit)
+                {
+                    blowbackCounter = 0;
+                    backwards = !backwards;
+                    blowback = false;
+                }
+            }
+        }
+
         // Count delay for next shot
         if (_countFireDelta)
-        {
             _fireDelta += Time.deltaTime;
             //Debug.Log(fireDelta + " Fire Delta");
-        }
         // If (FireDelay) certain time has passed since last bullet was shot, fireDelta becomes 0 and next bullet can be shot
         if (_fireDelta >= Gun.GetComponent<GunScript>().FireDelay())
         {
@@ -203,6 +259,7 @@ public class PlayerControls : MonoBehaviour {
             _countFireDelta = false;
         }
     }
+    /*
     void PlayerMovement()
     {
         Vector3 _velocity = Rb.velocity;
@@ -217,11 +274,12 @@ public class PlayerControls : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.W))
         {
-            _forwardSpeed = 20;
+            Vector3 forwarsMove = Vector3.forward * 5;
+            _forwardSpeed = 10;
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            _forwardSpeed = -5;
+            _forwardSpeed = -10;
         }
         else
         {
@@ -229,11 +287,11 @@ public class PlayerControls : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.A))
         {
-            _sidewaysSpeed = -2;
+            _sidewaysSpeed = -10;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            _sidewaysSpeed = 5;
+            _sidewaysSpeed = 10;
         }
         else
         {
@@ -263,8 +321,60 @@ public class PlayerControls : MonoBehaviour {
             transform.Rotate(0, Input.GetAxis("Mouse X") * SensitivityX, 0);
         }
     }
+    */
+
     public bool Grounded()
     {
         return _grounded;
-    }    
+    }
+
+    private void Move()
+    {
+        //calculate velocity as vector
+        //GetAxisRaw has no smoothing. Will do that ourself for slower movement .
+        float xMove = Input.GetAxis("Horizontal");
+        float zMove = Input.GetAxis("Vertical");
+
+        //vector with values  (1,0,0)
+        Vector3 moveHorizontal = transform.right * xMove;
+
+        //vector with values  (0,0,1)forward
+        //vector with values  (0,0,0)not moving
+        //vector with values  (0,0,-1)backwards
+        Vector3 moveVertical = transform.forward * zMove;
+
+        //lenght doesn't matter. totall lenght should be one. we won't get a different speed. 
+        Vector3 velocity = (moveHorizontal + moveVertical) * _speed;
+
+        //apply movement
+        _motor.Move(velocity);
+
+        //calculate rotation as vector : turning around
+        float yRotation = Input.GetAxisRaw("Mouse X");
+        //want only camera to be affected
+        Vector3 rotation = new Vector3(0f, yRotation, 0f) * _sensitivity;
+        //apply rotaion
+        _motor.Rotate(rotation);
+
+        //calculate camera as vector : turning around
+        float xRotation = Input.GetAxisRaw("Mouse Y");
+        //want only camera to be affected
+        float cameraRotaionX = xRotation * _sensitivity;
+        //apply rotaion
+        _motor.RotateCamera(cameraRotaionX);
+
+        // ApplyThursters();
+        if (Input.GetKey("left shift"))
+        {
+            Vector3 movefastforward = transform.forward;
+            Vector3 velocity1 = movefastforward * _runSpeed;
+            _motor.Move(velocity1);
+        }
+
+        if (Input.GetKey(KeyCode.Space) && _grounded)
+        {
+            
+            _grounded = false;
+        }
+    }
 }
