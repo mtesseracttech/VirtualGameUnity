@@ -17,8 +17,9 @@ public class EnemyAgent : MonoBehaviour
     public GameObject MuzzleFlash;
     public GameObject BloodParticles;
     public GameObject ImpactParticles;
-    public GameObject SharedConsciousnessEntity;
-    private SharedConscious _sharedConscious;
+    public GameObject SharedAI;
+    public int OnDestroyHelpRange = 20;
+    private SharedEnemyAI _sharedAI;
 
     private Vector3 _stepVector = new Vector3(0, 0.002f, 0);
     private bool _movingUp = false;
@@ -41,8 +42,8 @@ public class EnemyAgent : MonoBehaviour
         Parent = GetComponent<Rigidbody>();
         Target = TargetObject.GetComponent<Rigidbody>();
         NavAgent = GetComponent<NavMeshAgent>();
-        _sharedConscious = SharedConsciousnessEntity.GetComponent<SharedConscious>();
-        _sharedConscious.RegisterAgent(this);
+        _sharedAI = SharedAI.GetComponent<SharedEnemyAI>();
+        _sharedAI.RegisterAgent(this);
 
         List<GameObject> childObjects = GetChildrenComponents();
 
@@ -69,18 +70,26 @@ public class EnemyAgent : MonoBehaviour
     {
         Debug.Log("Switching state to:" + pState.FullName);
         EnteredNewState = true;
-        NavAgent.Stop();
+        if(NavAgent.isOnNavMesh) NavAgent.Stop();
         SetSeeTarget();
         _state = _stateCache[pState];
+    }
+
+    public AbstractEnemyState GetState()
+    {
+        return _state;
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
-        DebugCode();
-        Levitate();
-        SetSeeTarget();
-        _state.Update();
+        if (Parent != null)
+        {
+            DebugCode();
+            Levitate();
+            SetSeeTarget();
+            _state.Update();
+        }
     }
 
     private void SetSeeTarget()
@@ -112,16 +121,17 @@ public class EnemyAgent : MonoBehaviour
     private bool LookForTarget()
     {
         var differenceVec = Target.transform.position - Parent.transform.position;
-        //Debug.Log(differenceVec.magnitude);
+
         if (differenceVec.magnitude < SightRange) //Sees if Target is even in range
         {
             var targetAngle = Vector3.Angle(differenceVec, Parent.transform.forward);
-            //Debug.Log("Angle between Parent and Target: " + targetAngle);
-            if (targetAngle > SightConeAngle/2)
+
+            if (targetAngle > SightConeAngle / 2)
             {
                 return false; //Sees if Target is in sight cone
             }
             RaycastHit hit;
+
             if (Physics.Raycast(Parent.position, differenceVec, out hit, differenceVec.magnitude))
             {
                 Debug.Log(hit.collider.gameObject.tag);
@@ -161,5 +171,12 @@ public class EnemyAgent : MonoBehaviour
             _movingUp = !_movingUp;
             _upCounter = 0;
         }
+    }
+
+    void OnDestroy()
+    {
+        Debug.Log("Enemy Destroyed, Emergency Search Initiated!");
+        _sharedAI.SearchInRangeAgent(this, OnDestroyHelpRange);
+        _sharedAI.UnRegisterAgent(this);
     }
 }
