@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class bulletImpactScript : MonoBehaviour {
+public class BulletImpactScript : MonoBehaviour {
     private float time;
 	// Use this for initialization
 	void Start () {
