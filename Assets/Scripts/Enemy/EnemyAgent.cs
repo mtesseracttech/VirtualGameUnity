@@ -70,7 +70,7 @@ public class EnemyAgent : MonoBehaviour
     {
         Debug.Log("Switching state to:" + pState.FullName);
         EnteredNewState = true;
-        NavAgent.Stop();
+        if(NavAgent.isOnNavMesh) NavAgent.Stop();
         SetSeeTarget();
         _state = _stateCache[pState];
     }
