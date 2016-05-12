@@ -8,9 +8,10 @@ public class TImer : MonoBehaviour
 
     public Text TimerText;
     private float startTime = 90.0f;
-    private bool start = false;
+    public bool start = false;
     private float _time;
     private float _minutes, _seconds;
+    public Canvas gText;
 
     [SerializeField]
     private int _scene;
@@ -25,27 +26,23 @@ public class TImer : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-	   // if (start)
-	  //  return;
-	    if (_time > 0.0f)
-	    {
-            _time = startTime - Time.time; // ammount of time since the time has started
             _minutes = (int)_time / 60;
             _seconds = _time % 60;
             TimerText.text = _minutes + ":" + _seconds.ToString("f1");
-        }
-	    else
-	    {
-	        CheckGameOver();
-	    }
-    }
 
+	    if (start)
+	    {
+            _time = startTime - Time.time; // ammount of time since the time has started 
+            Debug.Log(_time);
+        }        
+        if (_time < 0.0f)
+                    CheckGameOver();
+
+    }
     private void CheckGameOver()
     {
         StartCoroutine(LoadNewScene());
     }
-
-
     IEnumerator LoadNewScene()
     {
         yield return new WaitForSeconds(5);

@@ -3,47 +3,45 @@ using UnityEngine;
 using System.Collections;
 using UnityEngineInternal;
 
+
 public class ShowThePopUp : MonoBehaviour {
 
 
-    private bool visible = false;
-    private float timeRemaining = 5.0f;
-    int interval = 1;
+    private bool _visible;
+    private float _timeRemaining = 5.0f;
+
+    int _interval = 1;
 
     void Start()
     {
-        visible = false;
+        _visible = false;
         PopUpTimerController.Initialize();
     }
 
     void Update()
     {
-        if (visible)
+        if (_visible)
         {
-            timeRemaining -= Time.deltaTime;
-            if (Time.time >= interval)
+            _timeRemaining -= Time.deltaTime;
+            if (Time.time >= _interval)
             {
-                interval = Mathf.FloorToInt(Time.time) + 1;
+                _interval = Mathf.FloorToInt(Time.time) + 1;
                 UpdateEverySecond();
             }
-        }
+        } 
     }
 
     void UpdateEverySecond()
     {
-        if (timeRemaining > 0)
-        PopUpTimerController.CreateFloatingText(Mathf.Round(timeRemaining).ToString(), transform);
+        if (_timeRemaining > 0)
+        {
+            PopUpTimerController.CreateFloatingText(Mathf.Round(_timeRemaining).ToString(), transform);
+        }
     }
 
   void OnTriggerEnter()
     {
-         visible = true;
-        Debug.Log("Lopas iejo"); 
+         _visible = true;
     }
 
-    void OnTriggerExit()
-    {
-        visible = false;
-        Debug.Log("Lopas");
-    }
 }

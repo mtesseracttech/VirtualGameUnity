@@ -84,7 +84,6 @@ public class Camera : MonoBehaviour
             gameObject.transform.localPosition = new Vector3(transform.localPosition.x, cameraY, transform.localPosition.z);
             bobCounter = 0;
         }
-        //Debug.Log(cameraY + "" + gameObject.transform.position.y);
     }
     void OnJumpCameraShake()
     {

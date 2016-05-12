@@ -23,7 +23,7 @@ public class PopUpTimerController : MonoBehaviour
             UnityEngine.Camera.main.WorldToViewportPoint(location.position);
 
         instance.transform.SetParent(canvas.transform,false);
-        instance.transform.position = screenPosition;
+        instance.transform.position = screenPosition + new Vector3(400,500);
         instance.UpdateText(text);
     }
 	
