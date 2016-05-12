@@ -14,30 +14,31 @@ public class PlayerControls2 : MonoBehaviour {
     Ray _ray;
 
     // Variables used for raycasting and shooting
+    public GameObject Gun;
+    public Transform GunEnd;
+    public GameObject BulletPrefab;
     public float FireDelay;
+
+    public GameObject Crosshair;
+
+    public ParticleSystem SmokeParticleSystem;
+    public GameObject EnemyHitParticles;
+    public GameObject DefaultHitParticles;
+
+    private GameObject _bullet;
+    private Vector3 _prevRayCastPoint;
+    private LineRenderer _lineRenderer;
+    private WaitForSeconds _shotLength = new WaitForSeconds(.07f);
+    private AudioSource _source;
     private float _fireDelta;
     private bool _countFireDelta;
 
-    public GameObject Crosshair;
-    public GameObject Gun;
-    public GameObject BulletPrefab;
-    private GameObject _bullet;
-    private Vector3 _prevRayCastPoint;
-
-    public ParticleSystem SmokeParticleSystem;
-    public GameObject HitParticles;
-    public GameObject ObjectHitEffect;
-    private LineRenderer _lineRenderer;
-    public Transform GunEnd;
-    private WaitForSeconds _shotLength = new WaitForSeconds(.07f);
-    private AudioSource _source;
-
     // Variables used for player movement
-    private Rigidbody _rigidBody;
-    public int MaxMagnitude = 3;
-    public float SlowDownFactor = 0.945f;
     public int MovementSpeed = 1;
     public float JumpSpeed = 250;
+    public float SlowDownFactor = 0.945f;
+    public int MaxMovementSpeed = 3;
+    private Rigidbody _rigidBody;
     private float _forwardSpeed = 0f;
     private float _sidewaysSpeed = 0f;
 
@@ -52,7 +53,7 @@ public class PlayerControls2 : MonoBehaviour {
     public float MaximumX = 360F;
     public float MinimumY = -90F;
     public float MaximumY = 90F;
-    float _rotationY = 0F;
+    private float _rotationY = 0f;
 
     public enum RotationAxes
     {
@@ -66,28 +67,29 @@ public class PlayerControls2 : MonoBehaviour {
         _source = GetComponent<AudioSource>();
         _lineRenderer = GetComponent<LineRenderer>();
 
-        MaxMagnitude = 3;
-		SlowDownFactor = 0.945f;
-		MovementSpeed = 1;
-		JumpSpeed = 250;
-
 		_deltaTime = 0f;
-		_countFireDelta = false;
-		_fireDelta = 0;
+        _fireDelta = 0f;
+        _countFireDelta = false;
+		_slowMotion = false;
 
         _rigidBody.freezeRotation = true;
-		_slowMotion = false;
-	}
+    }
     void Update()
     {
         SlowdownCode();
-       // ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
+        GUIInfo();
         LineOfAimHandler();
         PlayerMovement();
         PlayerAndCameraRotation();
         Shoot();
         PickUpHandler();
     }
+
+    private void GUIInfo()
+    {
+        //ammunation.text = " " + string.Format("{0:0.}", 1 / deltaTime)/*"Ammo: " + ammo*/;
+    }
+
 
     private void SlowdownCode()
     {
@@ -138,6 +140,7 @@ public class PlayerControls2 : MonoBehaviour {
     {
         if (SmokeParticleSystem != null) SmokeParticleSystem.Play();
     }
+
     private IEnumerator ShotEffect()
     {
         _lineRenderer.enabled = true;
@@ -145,6 +148,7 @@ public class PlayerControls2 : MonoBehaviour {
         yield return _shotLength;
         _lineRenderer.enabled = false;
     }
+
     void Shoot()
     {
         // Enable delaycounter (fireDelta++)
@@ -165,13 +169,13 @@ public class PlayerControls2 : MonoBehaviour {
                     Destroy(_hitInfo.collider.gameObject);
                     // Instantiating particles on enemy position
                     Vector3 particlesPos = _hitInfo.collider.gameObject.transform.position ;
-                    Instantiate(HitParticles, particlesPos, Quaternion.identity);
+                    Instantiate(EnemyHitParticles, particlesPos, Quaternion.identity);
                 }
                 else
                 {
                      _lineRenderer.SetPosition(0, GunEnd.position);
                      _lineRenderer.SetPosition(1, _hitInfo.point);
-                     Instantiate(HitParticles, _hitInfo.point, Quaternion.identity);
+                     Instantiate(EnemyHitParticles, _hitInfo.point, Quaternion.identity);
                 }
                 StartCoroutine(ShotEffect());
             }
@@ -220,22 +224,21 @@ public class PlayerControls2 : MonoBehaviour {
         else _sidewaysSpeed = 0;
 
         Vector3 direction = new Vector3(_sidewaysSpeed, 0, _forwardSpeed);
-        if (direction == Vector3.zero)
-        {
-            _rigidBody.velocity = _rigidBody.velocity * SlowDownFactor;
-        }
+
+        if (direction == Vector3.zero) _rigidBody.velocity = _rigidBody.velocity * SlowDownFactor;
         else
         {
-            if (velocity.magnitude <= MaxMagnitude)
+            if (velocity.magnitude <= MaxMovementSpeed)
             {
                 _rigidBody.AddRelativeForce(direction * 50);
             }
-            if (velocity.magnitude > MaxMagnitude)
+            if (velocity.magnitude > MaxMovementSpeed)
             {
                 _rigidBody.velocity = _rigidBody.velocity * SlowDownFactor;
             }
         }
     }
+
     void PlayerAndCameraRotation()
     {
         if (Axes == RotationAxes.MouseXAndY)
@@ -248,16 +251,14 @@ public class PlayerControls2 : MonoBehaviour {
             transform.localEulerAngles = new Vector3(0, rotationX, 0);
             Camera.localEulerAngles = new Vector3(-_rotationY, 0, 0);
         }
-        else if (Axes == RotationAxes.MouseX)
-        {
-            transform.Rotate(0, Input.GetAxis("Mouse X") * SensitivityX, 0);
-        }
-    }
-    public bool Grounded()
-    {
-        return _grounded;
+        else if (Axes == RotationAxes.MouseX) transform.Rotate(0, Input.GetAxis("Mouse X") * SensitivityX, 0);
     }
 
-    
-       
+    public bool Grounded
+    {
+        get
+        {
+            return _grounded;
+        }
+    }
 }
