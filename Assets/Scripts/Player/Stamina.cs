@@ -31,7 +31,7 @@ public class Stamina : MonoBehaviour
         if (isRunning)
         {
             tackle.TackleBool = true;
-            stamina -= Time.deltaTime / 5;
+            stamina -= Time.deltaTime / 2;
             staminaOut = false;
 
             if (stamina < 0)

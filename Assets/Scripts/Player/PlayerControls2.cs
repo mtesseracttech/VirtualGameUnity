@@ -102,7 +102,7 @@ public class PlayerControls2 : MonoBehaviour {
 
     private void SlowdownCode()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift)) _slowMotion = !_slowMotion;
+        if (Input.GetKeyDown(KeyCode.LeftCommand)) _slowMotion = !_slowMotion;
         if (_slowMotion) Time.timeScale = 0.5f;
         else Time.timeScale = 1f;
         _deltaTime += (Time.deltaTime - _deltaTime) * 0.1f;
@@ -138,7 +138,10 @@ public class PlayerControls2 : MonoBehaviour {
         {           
             if (_hitInfo.point != _prevRayCastPoint)
             {
-                Gun.transform.LookAt(_hitInfo.point);
+                if ((Camera.transform.position - _hitInfo.point).magnitude >= 2f)
+                {
+                    Gun.transform.LookAt(_hitInfo.point);
+                }
                 _prevRayCastPoint = _hitInfo.point;
             }
             Debug.DrawLine(Camera.transform.position, _hitInfo.point,Color.blue);
@@ -176,10 +179,6 @@ public class PlayerControls2 : MonoBehaviour {
                 if (_hitInfo.collider.gameObject.tag == "enemy")
                 {
                     Destroy(_hitInfo.collider.gameObject);
-                    // Instantiating particles on enemy position
-
-                    // Vector3 particlesPos = hitInfo.collider.gameObject.transform.position ;
-                    //Instantiate(hitParticles, particlesPos, Quaternion.identity);
                     _lineRenderer.SetPosition(0, GunEnd.position);
                     _lineRenderer.SetPosition(1, _hitInfo.point);
                     Instantiate(DefaultHitParticles, _hitInfo.point, Quaternion.identity);
@@ -230,7 +229,14 @@ public class PlayerControls2 : MonoBehaviour {
             _rigidBody.AddRelativeForce(new Vector3(0, JumpSpeed, 0));
         }
 
-        if (Input.GetKey(KeyCode.W)) _forwardSpeed = MovementSpeed;
+        if (Input.GetKey(KeyCode.W))
+        {
+            _forwardSpeed = MovementSpeed;
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                _forwardSpeed *= 2;
+            }
+        }
         else if (Input.GetKey(KeyCode.S)) _forwardSpeed = -MovementSpeed;
         else _forwardSpeed = 0;
 

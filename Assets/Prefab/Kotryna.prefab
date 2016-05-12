@@ -20,12 +20,13 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &125560
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 474324}
+  - 114: {fileID: 11473002}
   m_Layer: 0
   m_Name: gun
   m_TagString: Untagged
@@ -117,8 +118,8 @@ GameObject:
   - 120: {fileID: 12086650}
   - 82: {fileID: 8273492}
   - 114: {fileID: 11402648}
-  - 114: {fileID: 11405544}
-  - 114: {fileID: 11474504}
+  - 114: {fileID: 11415038}
+  - 114: {fileID: 11484064}
   m_Layer: 0
   m_Name: Kotryna
   m_TagString: Player
@@ -146,7 +147,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.09999935, z: 0.041998982}
+  m_LocalPosition: {x: 0, y: 0, z: 6.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 410982}
@@ -170,12 +171,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193530}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.246, y: -0.098, z: -4.426}
+  m_LocalRotation: {x: 0, y: 0.6259232, z: 0, w: -0.7798847}
+  m_LocalPosition: {x: 0.7, y: -0.098, z: -0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 481214}
-  - {fileID: 474324}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &474324
@@ -185,11 +185,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 125560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.851, y: -0.01, z: 0.711}
+  m_LocalPosition: {x: 0.46100008, y: -0.501, z: 0.54900014}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 466338}
-  m_Father: {fileID: 469666}
+  m_Father: {fileID: 481214}
   m_RootOrder: 1
 --- !u!4 &480244
 Transform:
@@ -210,10 +210,11 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163238}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.222, y: 0.491, z: -0.334}
+  m_LocalPosition: {x: 0, y: 0.491, z: -0.504}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 480244}
+  - {fileID: 474324}
   m_Father: {fileID: 469666}
   m_RootOrder: 0
 --- !u!20 &2012338
@@ -233,8 +234,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
-  field of view: 60
+  far clip plane: 996.99
+  field of view: 92
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -330,7 +331,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!81 &8181018
 AudioListener:
@@ -424,40 +425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59f569810036f8642a32ce917ed1f267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11405544
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 193530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 760d6140a1cf14784b5aec68206d4863, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  range: 50
-  fireDelay: 3
-  crosshair: {fileID: 186746}
-  gun: {fileID: 0}
-  bulletPrefab: {fileID: 149888, guid: 3942c396c7c620d4c85739c6abff18e5, type: 2}
-  SmokeParticleSystem: {fileID: 19881928}
-  EnemyHitEffect: {fileID: 117926, guid: e5a30a2f2e38b9b488e03a273681d8a7, type: 2}
-  DefaultHit: {fileID: 179636, guid: 00430ef218fd67349b2f68106538e733, type: 2}
-  gunEnd: {fileID: 410982}
-  rb: {fileID: 5430942}
-  MaxMagnitude: 3
-  accelerationValue: 0
-  SlowDownFactor: 0.945
-  MovementSpeed: 4
-  JumpSpeed: 10
-  camera: {fileID: 481214}
-  axes: 0
-  sensitivityX: 4
-  sensitivityY: 4
-  minimumX: -360
-  maximumX: 360
-  minimumY: -45
-  maximumY: 45
 --- !u!114 &11406218
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -473,6 +440,41 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1280
   TackleBool: 0
+--- !u!114 &11415038
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 193530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760d6140a1cf14784b5aec68206d4863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Range: 20
+  Gun: {fileID: 125560}
+  GunEnd: {fileID: 410982}
+  BulletPrefab: {fileID: 149888, guid: 3942c396c7c620d4c85739c6abff18e5, type: 2}
+  FireDelay: 1
+  Crosshair: {fileID: 186746}
+  SmokeParticleSystem: {fileID: 19881928}
+  rb: {fileID: 5430942}
+  MaxMagnitude: 3
+  accelerationValue: 0
+  EnemyHitParticles: {fileID: 117926, guid: e5a30a2f2e38b9b488e03a273681d8a7, type: 2}
+  DefaultHitParticles: {fileID: 179636, guid: 00430ef218fd67349b2f68106538e733, type: 2}
+  MovementSpeed: 4
+  JumpSpeed: 10
+  SlowDownFactor: 0.945
+  MaxMovementSpeed: 3
+  Camera: {fileID: 481214}
+  Axes: 0
+  SensitivityX: 15
+  SensitivityY: 15
+  MinimumX: -360
+  MaximumX: 360
+  MinimumY: -90
+  MaximumY: 90
 --- !u!114 &11417028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -521,7 +523,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896a0bc133ab76448a87c31f19e387e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11474504
+--- !u!114 &11473002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 125560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe248c254468b840a6f71746fadf97b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireDelay: 1
+--- !u!114 &11484064
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -533,6 +547,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TimerText: {fileID: 0}
+  start: 0
+  gText: {fileID: 0}
   _scene: 0
 --- !u!114 &11484186
 MonoBehaviour:
@@ -583,7 +599,7 @@ LineRenderer:
     m_EndColor:
       serializedVersion: 2
       rgba: 4294967295
-  m_UseWorldSpace: 1
+  m_UseWorldSpace: 0
 --- !u!136 &13630408
 CapsuleCollider:
   m_ObjectHideFlags: 1
