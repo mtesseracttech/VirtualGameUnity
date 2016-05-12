@@ -1,15 +1,20 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 
-public class Camera : MonoBehaviour {
-    public PlayerControls player;
+public class Camera : MonoBehaviour
+{
+    public GameObject player;
+
     ////////////// Variables used for camera shake effect when the player jumps /////
     private bool shake;
     private bool jumpUp;
     private bool jumped;
+    public float horizontalShakeValue;
+    public float verticalViewBobbingValue;
     public int jumpLimit;
     private int jumpCounter;
-    /////////////////////////////////////////////////////////////////////////////////
+
     ////////////// Variables used for View Bobbing //////////////////////////////////
     private float cameraY;
     private bool equalize;
@@ -18,13 +23,6 @@ public class Camera : MonoBehaviour {
     private int bobLimit;
     private int bobCounter;
 
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////
-
-    /////////////////////////////////////////////////////////////////////////////////
-
     // Use this for initialization
     void Start()
     {
@@ -32,11 +30,13 @@ public class Camera : MonoBehaviour {
         shake = false;
         jumpUp = false;
         jumped = false;
+        horizontalShakeValue = 0.075f;
+        verticalViewBobbingValue = 0.0075f;
         jumpLimit = 5;
         jumpCounter = 0;
-        ////////////////
+
         equalize = true;
-        cameraY = gameObject.transform.position.y;
+        cameraY = gameObject.transform.localPosition.y;
         bob = false;
         bobLimit = 20;
         bobCounter = 0;
@@ -51,16 +51,14 @@ public class Camera : MonoBehaviour {
     }
     void ViewBobbing()
     {
-        Vector3 stepVector = new Vector3(0, 0.0025f, 0);
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
-        {
             bob = true;
-        }
+        Vector3 stepVector = new Vector3(0, verticalViewBobbingValue, 0);
         if (bob)
         {
             if (!bobUp)
             {
-                gameObject.transform.position -= stepVector;
+                gameObject.transform.localPosition -= stepVector;
                 bobCounter += 1;
                 if (bobCounter >= bobLimit)
                 {
@@ -70,7 +68,7 @@ public class Camera : MonoBehaviour {
             }
             if (bobUp)
             {
-                gameObject.transform.position += stepVector;
+                gameObject.transform.localPosition += stepVector;
                 bobCounter += 1;
                 if (bobCounter >= bobLimit)
                 {
@@ -80,24 +78,30 @@ public class Camera : MonoBehaviour {
             }
         }
         if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        {
             bob = false;
-        //Debug.Log(cameraY + "    " + gameObject.transform.position.y);
+            bobUp = false;
+            gameObject.transform.localPosition = new Vector3(transform.localPosition.x, cameraY, transform.localPosition.z);
+            bobCounter = 0;
+        }
     }
     void OnJumpCameraShake()
     {
-        if (!player.Grounded())
+        if (player.GetComponent<PlayerControls2>().Grounded() == false)
+        {
             jumped = true;
-        if (player.Grounded() && jumped )
+        }
+        if (player.GetComponent<PlayerControls2>().Grounded() && jumped)
         {
             shake = true;
             jumped = false;
         }
         if (shake)
         {
-            Vector3 stepVector = new Vector3(0, 0.01f, 0);
+            Vector3 stepVector = new Vector3(0, horizontalShakeValue, 0);
             if (!jumpUp && jumpCounter < jumpLimit)
             {
-                gameObject.transform.position -= stepVector;
+                gameObject.transform.localPosition -= stepVector;
                 jumpCounter += 1;
                 if (jumpCounter >= jumpLimit)
                 {
@@ -107,7 +111,7 @@ public class Camera : MonoBehaviour {
             }
             else if (jumpUp && jumpCounter < jumpLimit)
             {
-                gameObject.transform.position += stepVector;
+                gameObject.transform.localPosition += stepVector;
                 jumpCounter += 1;
                 if (jumpCounter >= jumpLimit)
                 {
@@ -119,3 +123,4 @@ public class Camera : MonoBehaviour {
         }
     }
 }
+

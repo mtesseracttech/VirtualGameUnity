@@ -8,6 +8,7 @@ public class Stamina : MonoBehaviour
     private Rect staminaRect;
     private Texture2D staminaTexture;
     private bool isRunning;
+    private bool staminaOut;
     private Tackle tackle;
     float walkSpeed, runSpeed;
 
@@ -21,8 +22,8 @@ public class Stamina : MonoBehaviour
     }
     void Update()
     {
-
-        if (tackle.TackleBool)
+        if (tackle.TackleBool || (Input.GetKey(KeyCode.LeftShift) &&
+            (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))))
             isRunning = true;
         else
             isRunning = false;
@@ -30,17 +31,19 @@ public class Stamina : MonoBehaviour
         if (isRunning)
         {
             tackle.TackleBool = true;
-            stamina -= Time.deltaTime;
+            stamina -= Time.deltaTime / 5;
+            staminaOut = false;
 
             if (stamina < 0)
             {
                 stamina = 0;
                 tackle.TackleBool = false;
+                staminaOut = true;
             }
         }
         else if (stamina < maxStamina)
         {
-            stamina += Time.deltaTime / 60;
+            stamina += Time.deltaTime / 10;
             tackle.TackleBool = false;
         }
     }
@@ -51,6 +54,12 @@ public class Stamina : MonoBehaviour
         float rectWidth =ratio* Screen.width/3;
         staminaRect.width = rectWidth;
         GUI.DrawTexture(staminaRect,staminaTexture);
+    }
+
+    public bool StaminaCheck(bool staminaEnergy)
+    {
+        staminaEnergy = staminaOut;
+        return staminaEnergy;
     }
 
 }

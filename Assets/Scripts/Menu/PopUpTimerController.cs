@@ -13,19 +13,17 @@ public class PopUpTimerController : MonoBehaviour
         if (!popupTextPrefab)
         {
             popupTextPrefab = Resources.Load<PopUpTimer>("Prefabs/PopUpTimeParent");
-            Debug.Log(popupTextPrefab);
         }
-        
     }
 
     public static void CreateFloatingText(string text, Transform location)
     {
         PopUpTimer instance = Instantiate(popupTextPrefab);
-        Vector2 screenPosition =
-            UnityEngine.Camera.main.WorldToScreenPoint(location.position);
+        Vector3 screenPosition =
+            UnityEngine.Camera.main.WorldToViewportPoint(location.position);
 
         instance.transform.SetParent(canvas.transform,false);
-        instance.transform.position = screenPosition;
+        instance.transform.position = screenPosition + new Vector3(400,500);
         instance.UpdateText(text);
     }
 	
