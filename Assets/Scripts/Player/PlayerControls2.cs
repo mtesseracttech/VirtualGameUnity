@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerControls2 : MonoBehaviour {
    // public Text ammunation;
     private int _ammo;
@@ -20,15 +21,13 @@ public class PlayerControls2 : MonoBehaviour {
     public float FireDelay;
 
     public GameObject Crosshair;
-
     public ParticleSystem SmokeParticleSystem;
 
     private WaitForSeconds shotLength = new WaitForSeconds(.07f);
     private AudioSource source;
 
-    ////////////////////////////////////////////////////////////////////
-    ////////////// Variables used for player movement //////////////////
-    public Rigidbody rb;
+    // Variables used for player movement 
+    private Rigidbody rb;
     public int MaxMagnitude = 3;
     private float _maxMagnitude;
     public int accelerationValue;
@@ -72,9 +71,6 @@ public class PlayerControls2 : MonoBehaviour {
     public float MinimumY = -90F;
     public float MaximumY = 90F;
     private float _rotationY = 0f;
-
-   
-
     void Start()
     {
         //Getting Components
@@ -261,7 +257,6 @@ public class PlayerControls2 : MonoBehaviour {
 
     void PlayerAndCameraRotation()
     {
-
         if (Axes == RotationAxes.MouseXAndY)
         {
             float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * SensitivityX;
