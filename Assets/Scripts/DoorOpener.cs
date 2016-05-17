@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+[RequireComponent(typeof(AudioSource))]
 public class DoorOpener : MonoBehaviour {
     public Transform Door1;
     public Transform Door2;
@@ -10,6 +10,7 @@ public class DoorOpener : MonoBehaviour {
     private bool _close;
     private int _counter;
     private int _limit;
+    public  AudioSource audio;
     // Use this for initialization
     void Start() {
         _readyToOpen = true;
@@ -18,6 +19,7 @@ public class DoorOpener : MonoBehaviour {
         _close = false;
         _counter = 0;
         _limit = 15;
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -30,6 +32,7 @@ public class DoorOpener : MonoBehaviour {
         if (col.gameObject.tag == "Player" || col.gameObject.tag == "Drone")
         {
             _open = true;
+            audio.Play();
         }
     }
     void OnTriggerExit(Collider col)

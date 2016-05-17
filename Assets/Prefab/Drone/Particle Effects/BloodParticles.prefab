@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 458156}
   - 198: {fileID: 19884570}
   - 199: {fileID: 19999494}
-  - 114: {fileID: 11446868}
+  - 114: {fileID: 11476216}
   m_Layer: 0
   m_Name: BloodParticles
   m_TagString: Untagged
@@ -30,7 +30,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11446868
+--- !u!114 &11476216
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
